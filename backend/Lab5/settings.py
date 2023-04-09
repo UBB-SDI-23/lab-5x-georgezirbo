@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'django_extensions',
     'drf_spectacular',
+    'corsheaders'
 ]
 
 REST_FRAMEWORK = {
@@ -68,9 +69,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware'
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+CORS_ORIGIN_ALLOW_ALL=True
 
 ROOT_URLCONF = 'Lab5.urls'
 
