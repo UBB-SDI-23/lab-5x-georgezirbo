@@ -1,0 +1,1113 @@
+openapi: 3.0.3
+info:
+  title: MPP Project
+  version: 1.0.0
+paths:
+  /api/course/:
+    get:
+      operationId: course_list
+      tags:
+      - course
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseSerializerList'
+          description: ''
+    post:
+      operationId: course_create
+      tags:
+      - course
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseSerializerList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseSerializerList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseSerializerList'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseSerializerList'
+          description: ''
+  /api/course/{cid}/:
+    get:
+      operationId: course_retrieve
+      parameters:
+      - in: path
+        name: cid
+        schema:
+          type: integer
+        description: A unique integer value identifying this course.
+        required: true
+      tags:
+      - course
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseSerializerDetails'
+          description: ''
+    put:
+      operationId: course_update
+      parameters:
+      - in: path
+        name: cid
+        schema:
+          type: integer
+        description: A unique integer value identifying this course.
+        required: true
+      tags:
+      - course
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CourseSerializerDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CourseSerializerDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CourseSerializerDetails'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseSerializerDetails'
+          description: ''
+    patch:
+      operationId: course_partial_update
+      parameters:
+      - in: path
+        name: cid
+        schema:
+          type: integer
+        description: A unique integer value identifying this course.
+        required: true
+      tags:
+      - course
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseSerializerDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseSerializerDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCourseSerializerDetails'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CourseSerializerDetails'
+          description: ''
+    delete:
+      operationId: course_destroy
+      parameters:
+      - in: path
+        name: cid
+        schema:
+          type: integer
+        description: A unique integer value identifying this course.
+        required: true
+      tags:
+      - course
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/course/no-students/:
+    get:
+      operationId: course_no_students_list
+      tags:
+      - course
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CourseNoStudents'
+          description: ''
+  /api/grade/:
+    get:
+      operationId: grade_list
+      tags:
+      - grade
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GradeSerializerList'
+          description: ''
+    post:
+      operationId: grade_create
+      tags:
+      - grade
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeSerializerList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GradeSerializerList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GradeSerializerList'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GradeSerializerList'
+          description: ''
+  /api/grade/{gid}/:
+    get:
+      operationId: grade_retrieve
+      parameters:
+      - in: path
+        name: gid
+        schema:
+          type: integer
+        description: A unique integer value identifying this grade.
+        required: true
+      tags:
+      - grade
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GradeSerializerDetails'
+          description: ''
+    put:
+      operationId: grade_update
+      parameters:
+      - in: path
+        name: gid
+        schema:
+          type: integer
+        description: A unique integer value identifying this grade.
+        required: true
+      tags:
+      - grade
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GradeSerializerDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GradeSerializerDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GradeSerializerDetails'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GradeSerializerDetails'
+          description: ''
+    patch:
+      operationId: grade_partial_update
+      parameters:
+      - in: path
+        name: gid
+        schema:
+          type: integer
+        description: A unique integer value identifying this grade.
+        required: true
+      tags:
+      - grade
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedGradeSerializerDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedGradeSerializerDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedGradeSerializerDetails'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GradeSerializerDetails'
+          description: ''
+    delete:
+      operationId: grade_destroy
+      parameters:
+      - in: path
+        name: gid
+        schema:
+          type: integer
+        description: A unique integer value identifying this grade.
+        required: true
+      tags:
+      - grade
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/student/:
+    get:
+      operationId: student_list
+      tags:
+      - student
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentSerializerList'
+          description: ''
+    post:
+      operationId: student_create
+      tags:
+      - student
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentSerializerList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentSerializerList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentSerializerList'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentSerializerList'
+          description: ''
+  /api/student/{sid}/:
+    get:
+      operationId: student_retrieve
+      parameters:
+      - in: path
+        name: sid
+        schema:
+          type: integer
+        description: A unique integer value identifying this student.
+        required: true
+      tags:
+      - student
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentSerializerDetails'
+          description: ''
+    put:
+      operationId: student_update
+      parameters:
+      - in: path
+        name: sid
+        schema:
+          type: integer
+        description: A unique integer value identifying this student.
+        required: true
+      tags:
+      - student
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StudentSerializerDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StudentSerializerDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StudentSerializerDetails'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentSerializerDetails'
+          description: ''
+    patch:
+      operationId: student_partial_update
+      parameters:
+      - in: path
+        name: sid
+        schema:
+          type: integer
+        description: A unique integer value identifying this student.
+        required: true
+      tags:
+      - student
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentSerializerDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentSerializerDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStudentSerializerDetails'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StudentSerializerDetails'
+          description: ''
+    delete:
+      operationId: student_destroy
+      parameters:
+      - in: path
+        name: sid
+        schema:
+          type: integer
+        description: A unique integer value identifying this student.
+        required: true
+      tags:
+      - student
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/student/by-average/:
+    get:
+      operationId: student_by_average_list
+      tags:
+      - student
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentAverage'
+          description: ''
+  /api/teacher/:
+    get:
+      operationId: teacher_list
+      tags:
+      - teacher
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeacherSerializerList'
+          description: ''
+    post:
+      operationId: teacher_create
+      tags:
+      - teacher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherSerializerList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeacherSerializerList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeacherSerializerList'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherSerializerList'
+          description: ''
+  /api/teacher/{tid}/:
+    get:
+      operationId: teacher_retrieve
+      parameters:
+      - in: path
+        name: tid
+        schema:
+          type: integer
+        description: A unique integer value identifying this teacher.
+        required: true
+      tags:
+      - teacher
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherSerializerDetails'
+          description: ''
+    put:
+      operationId: teacher_update
+      parameters:
+      - in: path
+        name: tid
+        schema:
+          type: integer
+        description: A unique integer value identifying this teacher.
+        required: true
+      tags:
+      - teacher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TeacherSerializerDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TeacherSerializerDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TeacherSerializerDetails'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherSerializerDetails'
+          description: ''
+    patch:
+      operationId: teacher_partial_update
+      parameters:
+      - in: path
+        name: tid
+        schema:
+          type: integer
+        description: A unique integer value identifying this teacher.
+        required: true
+      tags:
+      - teacher
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherSerializerDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherSerializerDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedTeacherSerializerDetails'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeacherSerializerDetails'
+          description: ''
+    delete:
+      operationId: teacher_destroy
+      parameters:
+      - in: path
+        name: tid
+        schema:
+          type: integer
+        description: A unique integer value identifying this teacher.
+        required: true
+      tags:
+      - teacher
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    CourseNoStudents:
+      type: object
+      properties:
+        cid:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        university:
+          type: string
+          maxLength: 100
+        faculty:
+          type: string
+          maxLength: 100
+        teacher:
+          type: integer
+        no_students:
+          type: integer
+      required:
+      - cid
+      - faculty
+      - name
+      - no_students
+      - teacher
+      - university
+    CourseSerializerDetails:
+      type: object
+      properties:
+        cid:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        university:
+          type: string
+          maxLength: 100
+        faculty:
+          type: string
+          maxLength: 100
+        department:
+          type: string
+          maxLength: 100
+        teacher:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        year:
+          type: integer
+          maximum: 2023
+          minimum: 2000
+        grades:
+          type: array
+          items:
+            $ref: '#/components/schemas/GradeSerializerList'
+      required:
+      - cid
+      - department
+      - faculty
+      - name
+      - teacher
+      - university
+    CourseSerializerList:
+      type: object
+      properties:
+        cid:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        university:
+          type: string
+          maxLength: 100
+        faculty:
+          type: string
+          maxLength: 100
+        department:
+          type: string
+          maxLength: 100
+        year:
+          type: integer
+          maximum: 2023
+          minimum: 2000
+        teacher:
+          type: integer
+      required:
+      - cid
+      - department
+      - faculty
+      - name
+      - teacher
+      - university
+    GradeSerializerDetails:
+      type: object
+      properties:
+        gid:
+          type: integer
+          readOnly: true
+        session:
+          type: number
+          format: double
+          title: Session Grade
+        retake:
+          type: number
+          format: double
+          maximum: 10
+          minimum: 1
+          nullable: true
+          title: Retake Grade
+        course:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        student:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+      required:
+      - course
+      - gid
+      - session
+      - student
+    GradeSerializerList:
+      type: object
+      properties:
+        gid:
+          type: integer
+          readOnly: true
+        session:
+          type: number
+          format: double
+          title: Session Grade
+        retake:
+          type: number
+          format: double
+          maximum: 10
+          minimum: 1
+          nullable: true
+          title: Retake Grade
+        course:
+          type: integer
+        student:
+          type: integer
+      required:
+      - course
+      - gid
+      - session
+      - student
+    Nested:
+      type: object
+      properties:
+        tid:
+          type: integer
+          readOnly: true
+        fname:
+          type: string
+          title: First Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        lname:
+          type: string
+          title: Last Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        rank:
+          $ref: '#/components/schemas/RankEnum'
+      required:
+      - fname
+      - lname
+      - rank
+      - tid
+    PatchedCourseSerializerDetails:
+      type: object
+      properties:
+        cid:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 100
+        university:
+          type: string
+          maxLength: 100
+        faculty:
+          type: string
+          maxLength: 100
+        department:
+          type: string
+          maxLength: 100
+        teacher:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        year:
+          type: integer
+          maximum: 2023
+          minimum: 2000
+        grades:
+          type: array
+          items:
+            $ref: '#/components/schemas/GradeSerializerList'
+    PatchedGradeSerializerDetails:
+      type: object
+      properties:
+        gid:
+          type: integer
+          readOnly: true
+        session:
+          type: number
+          format: double
+          title: Session Grade
+        retake:
+          type: number
+          format: double
+          maximum: 10
+          minimum: 1
+          nullable: true
+          title: Retake Grade
+        course:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        student:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+    PatchedStudentSerializerDetails:
+      type: object
+      properties:
+        sid:
+          type: integer
+          readOnly: true
+        fname:
+          type: string
+          title: First Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        lname:
+          type: string
+          title: Last Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        cnp:
+          type: string
+          pattern: '[1256][0-9]{2}[0-1][0-9][0-3][0-9]\d{6}'
+          maxLength: 13
+        email:
+          type: string
+          nullable: true
+          pattern: '[a-z]{2,10}\.[a-z]{2,10}@stud\.com'
+          maxLength: 100
+        phone:
+          type: string
+          nullable: true
+          pattern: 07\d{8}
+          maxLength: 10
+        grades:
+          type: array
+          items:
+            $ref: '#/components/schemas/GradeSerializerList'
+    PatchedTeacherSerializerDetails:
+      type: object
+      properties:
+        fname:
+          type: string
+          title: First Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        lname:
+          type: string
+          title: Last Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        rank:
+          $ref: '#/components/schemas/RankEnum'
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseSerializerList'
+    RankEnum:
+      enum:
+      - P
+      - A
+      - L
+      type: string
+      description: |-
+        * `P` - Professor
+        * `A` - Associate
+        * `L` - Lecturer
+    StudentAverage:
+      type: object
+      properties:
+        sid:
+          type: integer
+          readOnly: true
+        fname:
+          type: string
+          title: First Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        lname:
+          type: string
+          title: Last Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        cnp:
+          type: string
+          pattern: '[1256][0-9]{2}[0-1][0-9][0-3][0-9]\d{6}'
+          maxLength: 13
+        email:
+          type: string
+          nullable: true
+          pattern: '[a-z]{2,10}\.[a-z]{2,10}@stud\.com'
+          maxLength: 100
+        phone:
+          type: string
+          nullable: true
+          pattern: 07\d{8}
+          maxLength: 10
+        avg_grade:
+          type: number
+          format: double
+      required:
+      - avg_grade
+      - cnp
+      - fname
+      - lname
+      - sid
+    StudentSerializerDetails:
+      type: object
+      properties:
+        sid:
+          type: integer
+          readOnly: true
+        fname:
+          type: string
+          title: First Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        lname:
+          type: string
+          title: Last Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        cnp:
+          type: string
+          pattern: '[1256][0-9]{2}[0-1][0-9][0-3][0-9]\d{6}'
+          maxLength: 13
+        email:
+          type: string
+          nullable: true
+          pattern: '[a-z]{2,10}\.[a-z]{2,10}@stud\.com'
+          maxLength: 100
+        phone:
+          type: string
+          nullable: true
+          pattern: 07\d{8}
+          maxLength: 10
+        grades:
+          type: array
+          items:
+            $ref: '#/components/schemas/GradeSerializerList'
+      required:
+      - cnp
+      - fname
+      - lname
+      - sid
+    StudentSerializerList:
+      type: object
+      properties:
+        sid:
+          type: integer
+          readOnly: true
+        fname:
+          type: string
+          title: First Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        lname:
+          type: string
+          title: Last Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        cnp:
+          type: string
+          pattern: '[1256][0-9]{2}[0-1][0-9][0-3][0-9]\d{6}'
+          maxLength: 13
+        email:
+          type: string
+          nullable: true
+          pattern: '[a-z]{2,10}\.[a-z]{2,10}@stud\.com'
+          maxLength: 100
+        phone:
+          type: string
+          nullable: true
+          pattern: 07\d{8}
+          maxLength: 10
+      required:
+      - cnp
+      - fname
+      - lname
+      - sid
+    TeacherSerializerDetails:
+      type: object
+      properties:
+        fname:
+          type: string
+          title: First Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        lname:
+          type: string
+          title: Last Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        rank:
+          $ref: '#/components/schemas/RankEnum'
+        courses:
+          type: array
+          items:
+            $ref: '#/components/schemas/CourseSerializerList'
+      required:
+      - fname
+      - lname
+      - rank
+    TeacherSerializerList:
+      type: object
+      properties:
+        tid:
+          type: integer
+          readOnly: true
+        fname:
+          type: string
+          title: First Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        lname:
+          type: string
+          title: Last Name
+          pattern: '[A-Z][a-z]{1,10}'
+          maxLength: 100
+        rank:
+          $ref: '#/components/schemas/RankEnum'
+      required:
+      - fname
+      - lname
+      - rank
+      - tid
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
