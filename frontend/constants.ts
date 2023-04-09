@@ -1,4 +1,4 @@
-const PROD_BACKEND_API_URL = "http://34.116.217.75/api/";
+const PROD_BACKEND_API_URL = "http://34.118.73.134/api/";
 const DEV_BACKEND_API_URL = "http://127.0.0.1:8000/api/";
 export const BACKEND_API_URL = PROD_BACKEND_API_URL;
 
