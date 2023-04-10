@@ -1,6 +1,26 @@
 from django.urls import path
-from .views import *
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
+from .views.CourseCreateList import \
+    CourseCreateList
+from .views.CourseDetail import \
+    CourseDetail
+from .views.CourseNoStudents import \
+    CoursesNoStudents
+from .views.GradeCreateList import \
+    GradeCreateList
+from .views.GradeDetail import \
+    GradeDetail
+from .views.StudentByAverage import \
+    StudentByAverage
+from .views.StudentCreateList import \
+    StudentCreateList
+from .views.StudentDetail import \
+    StudentDetail
+from .views.TeacherCreateList import \
+    TeacherCreateList
+from .views.TeacherDetail import \
+    TeacherDetail
 
 urlpatterns=[
     path('student/', StudentCreateList.as_view()),

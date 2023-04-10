@@ -10,9 +10,6 @@ class Student(models.Model):
     email = models.CharField(max_length=100, validators=[RegexValidator(r'[a-z]{2,10}\.[a-z]{2,10}@stud\.com', message='Please introduce a valid email')], blank=True, null=True, verbose_name='Email')
     phone = models.CharField(max_length=10, validators=[RegexValidator(r'07\d{8}', message='Please introduce a valid phone number')], blank=True, null=True, verbose_name='Phone')
 
-    class Meta:
-        unique_together = ('fname', 'lname')
-
     def __str__(self):
         return f"[{self.fname} {self.lname}]: {self.cnp}; {self.email}; {self.phone}"
 
