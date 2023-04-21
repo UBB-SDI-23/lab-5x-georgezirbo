@@ -1,9 +1,9 @@
 from rest_framework import \
     generics
 
-from backend.api.models import \
+from api.models import \
     Teacher
-from backend.api.serializers import \
+from api.serializers import \
     TeacherSerializerDetails
 
 
