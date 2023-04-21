@@ -56,7 +56,7 @@ export const StudentDetails = () => {
                         {student?.grades?.map((grade, index) => (
                         <Grid item xs={3} key={grade.gid}>
                             <ListItem>
-                            <ListItemText primary={`${grade.gid}: ${Math.max(grade.session, grade.retake)}`} />
+                            <ListItemText primary={`${Math.max(grade.session, grade.retake)}`} />
                             </ListItem>
                         </Grid>
                         ))}
