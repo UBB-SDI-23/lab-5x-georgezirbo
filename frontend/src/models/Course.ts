@@ -7,7 +7,7 @@ export interface Course {
     university: string;
     faculty: string;
     department: string;
-    teacher: Teacher;
+    teacher?: string;
     year: string;
     grades?: Grade[];
 }
