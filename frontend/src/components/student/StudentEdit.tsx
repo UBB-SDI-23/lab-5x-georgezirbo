@@ -47,9 +47,9 @@ export const StudentEdit = () => {
 
     const editStudent = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
-        try{
+        try {
             await axios.put(`${BACKEND_API_URL}student/${studentID}/`, student);
-            navigate(`/student/`);
+            navigate(`/student/${studentID}/details/`);
         }catch(error){
             console.log(error);
             alert(error);

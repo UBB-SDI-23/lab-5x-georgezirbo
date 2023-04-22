@@ -4,6 +4,7 @@ from .models import *
 
 
 class GradeSerializerList(serializers.ModelSerializer):
+
     class Meta:
         model = Grade
         fields = '__all__'
@@ -15,6 +16,14 @@ class GradeSerializerDetails(serializers.ModelSerializer):
         fields = '__all__'
         depth = 1
 
+class GradeSerializerDetailsPartial(serializers.ModelSerializer):
+    course_name = serializers.CharField(source='course.name', read_only=True)
+    student_fname = serializers.CharField(source='student.fname', read_only=True)
+    student_lname = serializers.CharField(source='student.lname', read_only=True)
+
+    class Meta:
+        model = Grade
+        fields = ('gid', 'course', 'course_name', 'student', 'student_fname', 'student_lname','session', 'retake')
 
 class StudentSerializerList(serializers.ModelSerializer):
     class Meta:
@@ -23,7 +32,7 @@ class StudentSerializerList(serializers.ModelSerializer):
 
 
 class StudentSerializerDetails(serializers.ModelSerializer):
-    grades = GradeSerializerList(source='student_grades', read_only=True, required=False, many=True)
+    grades = GradeSerializerDetailsPartial(source='student_grades', read_only=True, required=False, many=True)
 
     class Meta:
         model = Student
@@ -36,7 +45,7 @@ class CourseSerializerList(serializers.ModelSerializer):
         fields = '__all__'
 
 class CourseSerializerDetails(serializers.ModelSerializer):
-    grades = GradeSerializerList(source='course_grades', required=False, many=True)
+    grades = GradeSerializerDetailsPartial(source='course_grades', read_only=True, required=False, many=True)
 
     class Meta:
         model = Course
@@ -49,7 +58,7 @@ class TeacherSerializerList(serializers.ModelSerializer):
         fields = '__all__'
 
 class TeacherSerializerDetails(serializers.ModelSerializer):
-    courses = CourseSerializerList(source='teacher_courses', required=False, many=True)
+    courses = CourseSerializerList(source='teacher_courses', read_only=True, required=False, many=True)
     class Meta:
         model = Teacher
         fields = ('fname', 'lname', 'rank', 'courses')
@@ -65,3 +74,4 @@ class CourseNoStudentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('cid', 'name', 'university', 'faculty', 'teacher', 'no_students')
+

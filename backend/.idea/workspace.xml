@@ -4,7 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="068c48b9-e7d0-4f85-83d5-d2b9ad7c6fa6" name="Changes" comment="views" />
+    <list default="true" id="068c48b9-e7d0-4f85-83d5-d2b9ad7c6fa6" name="Changes" comment="views">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/serializers.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/serializers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/views/GradeCreateList.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views/GradeCreateList.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/constants.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/NavMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/NavMenu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/student/StudentDetails.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/student/StudentDetails.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/student/StudentEdit.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/student/StudentEdit.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/student/StudentsAll.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/student/StudentsAll.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/models/Course.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/models/Course.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/models/Grade.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/models/Grade.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -72,6 +84,8 @@
       <workItem from="1682040066194" duration="2673000" />
       <workItem from="1682097513968" duration="183000" />
       <workItem from="1682097728781" duration="96000" />
+      <workItem from="1682164763132" duration="2663000" />
+      <workItem from="1682171979593" duration="2201000" />
     </task>
     <task id="LOCAL-00001" summary="viewa">
       <created>1682097671698</created>
@@ -85,6 +99,9 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnknownFeatures">
+    <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="viewa" />

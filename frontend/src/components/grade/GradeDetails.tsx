@@ -2,7 +2,7 @@ import { Card, CardActions, CardContent, IconButton, Box } from "@mui/material";
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Student } from "../../models/Student";
+import { Grade } from "../../models/Grade";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -11,65 +11,57 @@ import { BACKEND_API_URL } from "../../../constants";
 import { Tooltip } from "react-bootstrap";
 import { List, ListItem, ListItemText, Grid } from "@mui/material";
 
-export const StudentDetails = () => {
-	const { studentID } = useParams();
-    const [student, setStudent] = useState<Student>();
+export const GradeDetails = () => {
+	const { gradeID } = useParams();
+    const [grade, setGrade] = useState<Grade>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
 	useEffect(() => {
-        const fetchStudent = async () => {
+        const fetchGrade = async () => {
           setLoading(true);
           try {
-              const response = await fetch(`${BACKEND_API_URL}student/${studentID}/`);
+              const response = await fetch(`${BACKEND_API_URL}grade/${gradeID}/`);
               console.log(response);
             const data = await response.json();
-            setStudent(data);
+            setGrade(data);
           } catch (error) {
             console.error(error);
           } finally {
             setLoading(false);
           }
         };
-        fetchStudent();
-      }, [studentID]);
+        fetchGrade();
+      }, [gradeID]);
 
 	return (
         <Container>
             <h1 style={{paddingBottom: "25px"}}>
-			    Student Details
+			    Grade Details
 			</h1>
             <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
-                <IconButton component={Link} sx={{ mr: 3 }} to={`/student/`}>
+                <IconButton component={Link} sx={{ mr: 3 }} to={`/grade/`}>
                     <ArrowBackIcon />
                 </IconButton>{" "}
             </Box>
 			<Card>
                 <CardContent>
-                    <p>First Name: {student?.fname}</p>
-                    <p>Last Name: {student?.lname}</p>
-                    <p>CNP: {student?.cnp}</p>
-                    <p>Email: {student?.email}</p>
-                    <p>Phone: {student?.phone}</p>
-                    <p style={{ marginBottom: 0, fontWeight: 'bold'}}>Grades: </p>
-                    <List>
-                        {student?.grades?.map((grade) => (
-                            <ListItem style={{ display: 'flex', justifyContent: 'center' }} key={grade.gid}>
-                                {grade.course_name + ': ' + Math.max(grade.session, grade.retake)}
-                            </ListItem>
-                        ))}
-                    </List>
+                    <p>Course: {grade?.course_name}</p>
+                    <p>Student: {grade?.student_fname + " " + grade?.student_lname}</p>
+                    <p>Session: {grade?.session}</p>
+                    <p>Retake: {grade?.retake}</p>
+                    {/* <p>Teacher: {grade?.teacher}</p> */}
             </CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
 				<CardActions>
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${studentID}/edit/`}>
-                        <Tooltip title="Edit student">
+                    <IconButton component={Link} sx={{ mr: 3 }} to={`/grade/${gradeID}/edit/`}>
+                        <Tooltip title="Edit grade">
                         <EditIcon color="primary" />
                         </Tooltip>
                     </IconButton>
         
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${studentID}/remove/`}>
-                        <Tooltip title="Delete student">
+                    <IconButton component={Link} sx={{ mr: 3 }} to={`/grade/${gradeID}/remove/`}>
+                        <Tooltip title="Delete grade">
                         <DeleteForeverIcon sx={{ color: "red" }} />
                         </Tooltip>
                 </IconButton>

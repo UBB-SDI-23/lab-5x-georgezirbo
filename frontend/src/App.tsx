@@ -10,6 +10,21 @@ import { StudentDetails } from './components/student/StudentDetails';
 import { StudentRemove } from './components/student/StudentRemove'
 import { StudentEdit } from './components/student/StudentEdit'
 import { StudentByAverage } from './components/student/StudentByAverage';
+import { CourseAll } from './components/course/CourseAll' 
+import { CourseAdd } from './components/course/CourseAdd' 
+import { CourseEdit } from './components/course/CourseEdit' 
+import { CourseDetails } from './components/course/CourseDetails' 
+import { CourseRemove } from './components/course/CourseRemove' 
+import { GradeAll } from './components/grade/GradeAll' 
+import { GradeAdd } from './components/grade/GradeAdd' 
+import { GradeEdit } from './components/grade/GradeEdit' 
+import { GradeDetails } from './components/grade/GradeDetails' 
+import { GradeRemove } from './components/grade/GradeRemove' 
+import { TeacherAll } from './components/teacher/TeacherAll' 
+import { TeacherAdd } from './components/teacher/TeacherAdd' 
+import { TeacherEdit } from './components/teacher/TeacherEdit' 
+import { TeacherDetails } from './components/teacher/TeacherDetails' 
+import { TeacherRemove } from './components/teacher/TeacherRemove' 
 import { NavMenu } from './components/NavMenu'
 
 function App() {
@@ -27,7 +42,22 @@ function App() {
         <Route path="student/:studentID/details/" element={<StudentDetails />} />
         <Route path="student/:studentID/remove/" element={<StudentRemove />} />
         <Route path="student/by-average/" element={<StudentByAverage />} />
-      </Routes>
+        <Route path="teacher/" element={<TeacherAll />} />
+        <Route path="teacher/add/" element={<TeacherAdd />} />
+        <Route path="teacher/:teacherID/edit/" element={<TeacherEdit />} />
+        <Route path="teacher/:teacherID/details/" element={<TeacherDetails />} />
+        <Route path="teacher/:teacherID/remove/" element={<TeacherRemove />} />
+        <Route path="course/" element={<CourseAll />} />
+        <Route path="course/add/" element={<CourseAdd />} />
+        <Route path="course/:courseID/edit/" element={<CourseEdit />} />
+        <Route path="course/:courseID/details/" element={<CourseDetails />} />
+        <Route path="course/:courseID/remove/" element={<CourseRemove />} />
+        <Route path="grade/" element={<GradeAll />} />
+        <Route path="grade/add/" element={<GradeAdd />} />
+        <Route path="grade/:gradeID/edit/" element={<GradeEdit />} />
+        <Route path="grade/:gradeID/details/" element={<GradeDetails />} />
+        <Route path="grade/:gradeID/remove/" element={<GradeRemove />} />
+      </Routes> 
     </BrowserRouter>
   );
 }

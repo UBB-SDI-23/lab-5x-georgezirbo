@@ -1,8 +1,8 @@
-import { Card, CardActions, CardContent, IconButton, Box } from "@mui/material";
+import { Card, CardActions, CardContent, IconButton, Box, Typography } from "@mui/material";
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Student } from "../../models/Student";
+import { Teacher } from "../../models/Teacher";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -11,65 +11,67 @@ import { BACKEND_API_URL } from "../../../constants";
 import { Tooltip } from "react-bootstrap";
 import { List, ListItem, ListItemText, Grid } from "@mui/material";
 
-export const StudentDetails = () => {
-	const { studentID } = useParams();
-    const [student, setStudent] = useState<Student>();
+export const TeacherDetails = () => {
+	const { teacherID } = useParams();
+    const [teacher, setTeacher] = useState<Teacher>();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
 	useEffect(() => {
-        const fetchStudent = async () => {
+        const fetchTeacher = async () => {
           setLoading(true);
           try {
-              const response = await fetch(`${BACKEND_API_URL}student/${studentID}/`);
+              const response = await fetch(`${BACKEND_API_URL}teacher/${teacherID}/`);
               console.log(response);
             const data = await response.json();
-            setStudent(data);
+            setTeacher(data);
           } catch (error) {
             console.error(error);
           } finally {
             setLoading(false);
           }
         };
-        fetchStudent();
-      }, [studentID]);
+        fetchTeacher();
+    }, [teacherID]);
+    
+    const getValue: {[key: string]: string} = {
+        "P": "Professor",
+        "L": "Lecturer",
+        "A": "Associate"
+      };      
 
 	return (
         <Container>
             <h1 style={{paddingBottom: "25px"}}>
-			    Student Details
+			    Teacher Details
 			</h1>
             <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
-                <IconButton component={Link} sx={{ mr: 3 }} to={`/student/`}>
+                <IconButton component={Link} sx={{ mr: 3 }} to={`/teacher/`}>
                     <ArrowBackIcon />
                 </IconButton>{" "}
             </Box>
 			<Card>
                 <CardContent>
-                    <p>First Name: {student?.fname}</p>
-                    <p>Last Name: {student?.lname}</p>
-                    <p>CNP: {student?.cnp}</p>
-                    <p>Email: {student?.email}</p>
-                    <p>Phone: {student?.phone}</p>
-                    <p style={{ marginBottom: 0, fontWeight: 'bold'}}>Grades: </p>
+                    <p>First Name: {teacher?.fname}</p>
+                    <p>Last Name: {teacher?.lname}</p>
+                    <p>Rank: {teacher ? getValue[teacher.rank] : ""}</p>
+                    <p style={{ marginBottom: 0, fontWeight: 'bold'}}>Courses: </p>
                     <List>
-                        {student?.grades?.map((grade) => (
-                            <ListItem style={{ display: 'flex', justifyContent: 'center' }} key={grade.gid}>
-                                {grade.course_name + ': ' + Math.max(grade.session, grade.retake)}
-                            </ListItem>
+                        {teacher?.courses?.map((course) => (
+                            <ListItem style={{display:'flex', justifyContent:'center'}} key={course.cid}>{course.name}</ListItem>
                         ))}
                     </List>
-            </CardContent>
+                </CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
 				<CardActions>
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${studentID}/edit/`}>
-                        <Tooltip title="Edit student">
+                    <IconButton component={Link} sx={{ mr: 3 }} to={`/teacher/${teacherID}/edit/`}>
+                        <Tooltip title="Edit teacher">
                         <EditIcon color="primary" />
                         </Tooltip>
                     </IconButton>
         
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${studentID}/remove/`}>
-                        <Tooltip title="Delete student">
+                    <IconButton component={Link} sx={{ mr: 3 }} to={`/teacher/${teacherID}/remove/`}>
+                        <Tooltip title="Delete teacher">
                         <DeleteForeverIcon sx={{ color: "red" }} />
                         </Tooltip>
                 </IconButton>

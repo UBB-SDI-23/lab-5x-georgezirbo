@@ -8,5 +8,6 @@ export interface Course {
     faculty: string;
     department: string;
     teacher: Teacher;
+    year: string;
     grades?: Grade[];
 }

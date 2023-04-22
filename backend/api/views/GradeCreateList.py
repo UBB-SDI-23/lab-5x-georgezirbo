@@ -5,11 +5,11 @@ from rest_framework import \
 from api.models import \
     Grade
 from api.serializers import \
-    GradeSerializerList
+    GradeSerializerDetailsPartial
 
 
 class GradeCreateList(generics.ListCreateAPIView):
-    serializer_class = GradeSerializerList
+    serializer_class = GradeSerializerDetailsPartial
     queryset = Grade.objects.all()
 
     def get_queryset(self):

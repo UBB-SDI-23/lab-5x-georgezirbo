@@ -45,6 +45,54 @@ export const NavMenu = () => {
 						}}>
 						Students
 					</Button>
+					<Button
+						variant={path.startsWith("/grade") ? "outlined" : "text"}
+						to="/grade/"
+						component={Link}
+						sx={{
+							mr: 5,
+							color: 'white',
+							borderColor: '#333',
+							'&:hover': {
+								backgroundColor: 'black',
+								color: 'white',
+								borderColor: 'white'
+							},
+						}}>
+						Grades
+					</Button>
+					<Button
+						variant={path.startsWith("/course") ? "outlined" : "text"}
+						to="/course/"
+						component={Link}
+						sx={{
+							mr: 5,
+							color: 'white',
+							borderColor: '#333',
+							'&:hover': {
+								backgroundColor: 'black',
+								color: 'white',
+								borderColor: 'white'
+							},
+						}}>
+						Courses
+					</Button>
+					<Button
+						variant={path.startsWith("/teacher") ? "outlined" : "text"}
+						to="/teacher/"
+						component={Link}
+						sx={{
+							mr: 5,
+							color: 'white',
+							borderColor: '#333',
+							'&:hover': {
+								backgroundColor: 'black',
+								color: 'white',
+								borderColor: 'white'
+							},
+						}}>
+						Teachers
+					</Button>
 				</Toolbar>
 			</AppBar>
 		</Box>
