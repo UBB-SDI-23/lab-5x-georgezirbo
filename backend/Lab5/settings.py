@@ -109,7 +109,7 @@ DATABASES = {
         'NAME': 'mpp-database',
         'USER': 'postgres',
         'PASSWORD': 'password',
-        'HOST': '34.118.100.189',
+        'HOST': '34.118.92.57',
         'PORT': '5432',
     }
 }
