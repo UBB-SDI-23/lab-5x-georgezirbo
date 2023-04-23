@@ -6,4 +6,5 @@ export interface Teacher {
     lname: string;
     rank: string;
     courses?: Course[];
+    no_courses?: number;
 }

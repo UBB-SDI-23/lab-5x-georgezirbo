@@ -1,4 +1,6 @@
 #Create a student or list all students
+from django.db.models import \
+    Q
 from rest_framework import \
     generics
 
@@ -14,7 +16,7 @@ class GradeCreateList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = Grade.objects.all()
-        min_grade = self.request.query_params.get('session-gte')
+        min_grade = self.request.query_params.get('final-gte')
         if min_grade is not None:
-            queryset = queryset.filter(session__gte=min_grade)
+            queryset = queryset.filter(Q(session__gte=min_grade) | Q(retake__gte=min_grade))
         return queryset

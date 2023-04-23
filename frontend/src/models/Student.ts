@@ -9,4 +9,5 @@ export interface Student {
     phone: string;
     grades?: Grade[];
     avg_grade?: number;
+    no_courses?: number;
 }

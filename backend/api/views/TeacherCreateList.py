@@ -1,4 +1,6 @@
 #Create a teacher or list all teachers
+from django.db.models import \
+    Count
 from rest_framework import \
     generics
 
@@ -10,4 +12,7 @@ from api.serializers import \
 
 class TeacherCreateList(generics.ListCreateAPIView):
     serializer_class = TeacherSerializerList
-    queryset = Teacher.objects.all()
+    def get_queryset(self):
+        queryset = Teacher.objects\
+            .annotate(no_courses=Count('teacher_courses'))
+        return queryset

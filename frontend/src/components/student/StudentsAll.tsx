@@ -48,6 +48,7 @@ export const StudentAll = () => {
 		{ field: "cnp", headerName: "CNP", width: 200, align: 'center', headerAlign: 'center', },
 		{ field: "email", headerName: "Email", width: 250, align: 'center', headerAlign: 'center', },
 		{ field: "phone", headerName: "Phone", width: 150, align: 'center', headerAlign: 'center', },
+		{ field: "courses", headerName: "# of courses", width: 100, align: 'center', headerAlign: 'center', },
 		{
 			field: "operations",
 			headerName: "Operations",
@@ -55,13 +56,13 @@ export const StudentAll = () => {
 			align: 'center', headerAlign: 'center',
 			renderCell: (params) => (
 			  <Container>
-				  <IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/course/${params.row.cid}/edit/`}>
+				  <IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/student/${params.row.sid}/edit/`}>
 					  <Tooltip title="Edit course" arrow>
 					  <EditIcon color="primary" />
 					  </Tooltip>
 				  </IconButton>
 		
-				  <IconButton component={Link} sx={{ mr: 3 }} to={`/course/${params.row.cid}/remove/`}>
+				  <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${params.row.sid}/remove/`}>
 					  <Tooltip title="Delete course" arrow>
 					  <DeleteForeverIcon sx={{ color: "red" }} />
 					  </Tooltip>
@@ -79,6 +80,7 @@ export const StudentAll = () => {
 		  cnp: student.cnp,
 		  email: student.email,
 		  phone: student.phone,
+		  courses: student.no_courses,
 		  sid: student.sid, // add the sid field to use it in the operations renderer
 		};
 	  });

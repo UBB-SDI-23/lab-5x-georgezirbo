@@ -1,4 +1,6 @@
 #Create a student or list all students
+from django.db.models import \
+    Count
 from rest_framework import \
     generics
 
@@ -10,4 +12,7 @@ from api.serializers import \
 
 class StudentCreateList(generics.ListCreateAPIView):
     serializer_class = StudentSerializerList
-    queryset = Student.objects.all()
+    def get_queryset(self):
+        queryset = Student.objects\
+            .annotate(no_courses=Count('student_grades__course'))
+        return queryset

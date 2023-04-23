@@ -6,11 +6,11 @@ from rest_framework import \
 from api.models import \
     Course
 from api.serializers import \
-    CourseNoStudentsSerializer
+    CourseSerializerList
 
 
 class CoursesNoStudents(generics.ListAPIView):
-    serializer_class = CourseNoStudentsSerializer
+    serializer_class = CourseSerializerList
 
     def get_queryset(self):
         queryset = Course.objects\

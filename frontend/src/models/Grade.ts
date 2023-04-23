@@ -5,9 +5,9 @@ export interface Grade {
 	gid?: number;
     session: number;
     retake: number;
-    course?: string;
+    course?: number;
     course_name?: string;
     student_fname?: string;
     student_lname?: string;
-    student?: string;
+    student?: number;
 }

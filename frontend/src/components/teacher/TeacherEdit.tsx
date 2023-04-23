@@ -31,13 +31,14 @@ export const TeacherEdit = () => {
     const getKey: {[key: string]: string} = {
         "Professor": "P",
         "Lecturer": "L",
-        "Associate": "A"
+		"Associate": "A",
     };
-    const getValue: {[key: string]: string} = {
-        "P": "Professor",
-        "L": "Lecturer",
-        "A": "Associate"
-    };
+
+    const isFnameValid = teacher.fname != "";
+	const isLnameValid = teacher.lname != "";
+	const [validateFname, setValidateFname] = useState(false);
+	const [validateLname, setValidateLname] = useState(false);
+	const isFormValid = isFnameValid && isLnameValid;
     
     useEffect(() => {
         const fetchTeacher =async () => {
@@ -85,7 +86,10 @@ export const TeacherEdit = () => {
                             fullWidth
                             value={teacher.fname}
 							sx={{ mb: 2, textAlign: 'center' }}
-							onChange={(event) => setTeacher({ ...teacher, fname: event.target.value })}
+                            onChange={(event) => setTeacher({ ...teacher, fname: event.target.value })}
+                            error={validateFname && !isFnameValid}
+							helperText={validateFname && !isFnameValid ? 'Invalid first name.':''}
+							onFocus={() => setValidateFname(true)}
 						/>
 						<TextField
                             id="lname"
@@ -95,29 +99,28 @@ export const TeacherEdit = () => {
                             value={teacher.lname}
                             sx={{ mb: 2 }}
                             onChange={(event) => setTeacher({ ...teacher, lname: event.target.value })}
+                            error={validateLname && !isLnameValid}
+							helperText={validateLname && !isLnameValid ? 'Invalid last name.':''}
+							onFocus={() => setValidateLname(true)}
                         />
 
                         <TextField
                             id="rank"
                             label="Rank"
                             variant="outlined"
-                            fullWidth
+							fullWidth
                             select
-                            value={teacher.rank}
-                            sx={{ mb: 2 }}
-                            onChange={(event) => setTeacher({ ...teacher, rank: event.target.value})}
+                            sx={{ mb: 2, textAlign: "left" }}
+							onChange={(event) => { setTeacher({ ...teacher, rank: getKey[event.target.value] })}}
+							value={Object.keys(getKey).find(key => getKey[key] === teacher.rank) || 'Professor'}
                         >
-                            {Object.keys(getValue).map((key) => (
-                                <MenuItem key={key} value={key}>
-                                    <Typography sx={{ textAlign: 'left' }}>
-                                        {getValue[key]}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
+                            <MenuItem value="Professor" onClick={() => teacher.rank = 'P'}>Professor</MenuItem>
+							<MenuItem value="Lecturer" onClick={() => teacher.rank = 'L'}>Lecturer</MenuItem>
+							<MenuItem value="Associate" onClick={() => teacher.rank = 'A'}>Associate</MenuItem>
+						</TextField>
 
-                        </TextField>
 
-						<Button type="submit">Edit Teacher</Button>
+						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Edit Teacher</Button>
 					</form>
 				</CardContent>
 				<CardActions></CardActions>

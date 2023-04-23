@@ -1,5 +1,6 @@
 import {
-	Autocomplete,
+	MenuItem, 
+	Typography,
 	Button,
 	Card,
 	CardActions,
@@ -22,8 +23,20 @@ export const TeacherAdd = () => {
     const [teacher, setTeacher] = useState<Teacher>({
         fname: "",
         lname: "",
-        rank: ""
-      });
+        rank: "P"
+	});
+
+	const getKey: {[key: string]: string} = {
+        "Professor": "P",
+        "Lecturer": "L",
+		"Associate": "A",
+    };
+	
+	const isFnameValid = teacher.fname != "";
+	const isLnameValid = teacher.lname != "";
+	const [validateFname, setValidateFname] = useState(false);
+	const [validateLname, setValidateLname] = useState(false);
+	const isFormValid = isFnameValid && isLnameValid;
 
     const addTeacher = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
@@ -31,7 +44,8 @@ export const TeacherAdd = () => {
             console.log(teacher);
             await axios.post(`${BACKEND_API_URL}teacher/`, teacher);
             navigate('/teacher/');
-        } catch (error) {
+		} catch (error) {
+			console.log(teacher)
             alert("The introduced teacher could not be added.")
 			console.log(error);
 		}
@@ -57,6 +71,9 @@ export const TeacherAdd = () => {
 							fullWidth
 							sx={{ mb: 2 }}
 							onChange={(event) => setTeacher({ ...teacher, fname: event.target.value })}
+							error={validateFname && !isFnameValid}
+							helperText={validateFname && !isFnameValid ? 'Invalid first name.':''}
+							onFocus={() => setValidateFname(true)}
 						/>
 						<TextField
 							id="lname"
@@ -65,16 +82,26 @@ export const TeacherAdd = () => {
 							fullWidth
 							sx={{ mb: 2 }}
 							onChange={(event) => setTeacher({ ...teacher, lname: event.target.value })}
+							error={validateLname && !isLnameValid}
+							helperText={validateLname && !isLnameValid ? 'Invalid last name.':''}
+							onFocus={() => setValidateLname(true)}
                         />
                         <TextField
-							id="rank"
-							label="Rank"
-							variant="outlined"
+                            id="rank"
+                            label="Rank"
+                            variant="outlined"
 							fullWidth
-							sx={{ mb: 2 }}
-							onChange={(event) => setTeacher({ ...teacher, rank: event.target.value })}
-						/>
-						<Button type="submit">Add Teacher</Button>
+							select
+                            sx={{ mb: 2, textAlign: "left" }}
+							onChange={(event) => { setTeacher({ ...teacher, rank: getKey[event.target.value] })}}
+							value={Object.keys(getKey).find(key => getKey[key] === teacher.rank) || 'Professor'}
+                        >
+                            <MenuItem value="Professor" onClick={() => teacher.rank = 'P'}>Professor</MenuItem>
+							<MenuItem value="Lecturer" onClick={() => teacher.rank = 'L'}>Lecturer</MenuItem>
+							<MenuItem value="Associate" onClick={() => teacher.rank = 'A'}>Associate</MenuItem>
+						</TextField>
+
+						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Add Teacher</Button>
 					</form>
 				</CardContent>
 				<CardActions></CardActions>

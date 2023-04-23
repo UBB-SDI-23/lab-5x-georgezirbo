@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import {
+	Button,
+    TextField
+} from "@mui/material";
 import { Grade } from "../../models/Grade";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CircularProgress, IconButton, Tooltip, Box} from "@mui/material";
@@ -9,12 +13,14 @@ import { Link } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
-import { BarChart } from "@mui/icons-material";
+import { BarChart, Minimize} from "@mui/icons-material";
 import FilterAltIcon from '@mui/icons-material/FilterAlt'
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-export const GradeAll = () => {
+export const GradeFilter = () => {
 	const [grades, setGrades] = useState<Grade[]>([]);
-	const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [MinFinal, setMinFinal] = useState(0);
   
 	useEffect(() => {
 	  setLoading(true);
@@ -24,11 +30,18 @@ export const GradeAll = () => {
 			setGrades(data);
 			setLoading(false);
 		});
-	}, []);
+    }, []);
+    
+    const handleFilterClick = () => {
+        setLoading(true);
+        fetch(`${BACKEND_API_URL}grade/?final-gte=${MinFinal}`)
+          .then((res) => res.json())
+          .then((data) => {
+            setGrades(data);
+            setLoading(false);
+          });
+      };
   
-	if (!loading && grades.length === 0) {
-	  return <div>No grades</div>;
-	}
   
 	const columns: GridColDef[] = [
 		{
@@ -41,29 +54,8 @@ export const GradeAll = () => {
 		},
 		{ field: "course", headerName: "Course", width: 200, align: 'center', headerAlign: 'center', },
 		{ field: "student", headerName: "Student", width: 250, align: 'center', headerAlign: 'center', },
-		{ field: "session", headerName: "Session", width: 100 , align: 'center', headerAlign: 'center', },
-		{ field: "retake", headerName: "Retake", width: 100, align: 'center', headerAlign: 'center',   },
-		{
-		  field: "operations",
-		  headerName: "Operations",
-		  width: 150,
-		  align: 'center', headerAlign: 'center',
-		  renderCell: (params) => (
-			<Container>
-				<IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/grade/${params.row.gid}/edit/`}>
-					<Tooltip title="Edit grade" arrow>
-					<EditIcon color="primary" />
-					</Tooltip>
-				</IconButton>
-	  
-				<IconButton component={Link} sx={{ mr: 3 }} to={`/grade/${params.row.gid}/remove/`}>
-					<Tooltip title="Delete grade" arrow>
-					<DeleteForeverIcon sx={{ color: "red" }} />
-					</Tooltip>
-				</IconButton>
-			</Container>
-		  ),
-		},
+		{ field: "session", headerName: "Session", width: 100, align: 'center', headerAlign: 'center',  },
+		{ field: "retake", headerName: "Retake", width: 100, align: 'center', headerAlign: 'center',  },
 	  ];
 	  
 	  const rows = grades.map((grade, index) => {
@@ -80,25 +72,30 @@ export const GradeAll = () => {
 	
 	return (
 		<Container>
-			<h1 style={{paddingBottom: "20px", paddingTop: "60px"}}>
-				Grade List
+			<h1 style={{paddingBottom: "40px", paddingTop: "60px"}}>
+				Filter Grade List
 			</h1>
 			{loading && <CircularProgress />}
-			{!loading && grades.length === 0 && <p>No grades found</p>}
-			{!loading && (
-				<Box sx={{display: 'flex', justifyContent: 'flex-start', paddingBottom: "10px"}}>
-					<IconButton component={Link} sx={{ mr: 3 }} to={`/grade/add/`}>
-						<Tooltip title="Add a new grade" arrow>
-							<AddIcon sx={{color: "green"}} />
-						</Tooltip>
-					</IconButton>
-
-					<IconButton component={Link} sx={{ mr: 3 }} to={`/grade/filter/`}>
-						<Tooltip title="Filter Grades" arrow>
-							<FilterAltIcon sx={{ color: "blue" }} />
-						</Tooltip>
-					</IconButton>
-			  </Box>
+			{!loading && grades.length === 0 && <p>No grades</p>}
+            {!loading && (
+                <Box display="flex" alignItems="left" justifyContent="left" mb={3}>
+                    <IconButton component={Link} sx={{ mr: 25 }} to={`/grade/`}>
+                        <ArrowBackIcon />
+                    </IconButton>{" "}
+                    <TextField
+                        label="Min Final Grade"
+                        variant="outlined"
+                        size="medium"
+                        value={MinFinal}
+                        onChange={(e) => setMinFinal(parseFloat(e.target.value))}
+                        type="number"
+                        inputProps={{ min: 0, max: 10 }}
+                        sx={{ width: 150 }}
+                    />
+                    <Button variant="contained" startIcon={<FilterAltIcon/>} onClick={handleFilterClick} disabled={!MinFinal}>
+                        Filter
+                    </Button>
+              </Box>
 			)}
 			{!loading && grades.length > 0 && (
 				<Container style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap',}}>

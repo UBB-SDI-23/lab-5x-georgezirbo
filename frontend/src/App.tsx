@@ -14,12 +14,14 @@ import { CourseAll } from './components/course/CourseAll'
 import { CourseAdd } from './components/course/CourseAdd' 
 import { CourseEdit } from './components/course/CourseEdit' 
 import { CourseDetails } from './components/course/CourseDetails' 
-import { CourseRemove } from './components/course/CourseRemove' 
+import { CourseRemove } from './components/course/CourseRemove'
+import { CourseByNoStudents } from './components/course/CourseByNoStudents' 
 import { GradeAll } from './components/grade/GradeAll' 
 import { GradeAdd } from './components/grade/GradeAdd' 
 import { GradeEdit } from './components/grade/GradeEdit' 
 import { GradeDetails } from './components/grade/GradeDetails' 
 import { GradeRemove } from './components/grade/GradeRemove' 
+import { GradeFilter } from './components/grade/GradeFilter'
 import { TeacherAll } from './components/teacher/TeacherAll' 
 import { TeacherAdd } from './components/teacher/TeacherAdd' 
 import { TeacherEdit } from './components/teacher/TeacherEdit' 
@@ -49,6 +51,7 @@ function App() {
         <Route path="teacher/:teacherID/remove/" element={<TeacherRemove />} />
         <Route path="course/" element={<CourseAll />} />
         <Route path="course/add/" element={<CourseAdd />} />
+        <Route path="course/by-no-students/" element={<CourseByNoStudents />} />
         <Route path="course/:courseID/edit/" element={<CourseEdit />} />
         <Route path="course/:courseID/details/" element={<CourseDetails />} />
         <Route path="course/:courseID/remove/" element={<CourseRemove />} />
@@ -57,6 +60,7 @@ function App() {
         <Route path="grade/:gradeID/edit/" element={<GradeEdit />} />
         <Route path="grade/:gradeID/details/" element={<GradeDetails />} />
         <Route path="grade/:gradeID/remove/" element={<GradeRemove />} />
+        <Route path="grade/filter/" element={<GradeFilter />} />
       </Routes> 
     </BrowserRouter>
   );

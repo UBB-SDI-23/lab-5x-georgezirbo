@@ -32,44 +32,24 @@ export const StudentByAverage = () => {
   
 	const columns: GridColDef[] = [
 		{ field: "id", headerName: "#", width: 70 },
-		{ field: "fname", headerName: "First name", width: 150,
+		{ field: "fname", headerName: "First name", width: 150 , align: 'center', headerAlign: 'center', 
 			renderCell: (params) => (
 				<Link to={`/student/${params.row.sid}/details/`} title="View student details">
 					{params.value}
 				</Link>
 			),
 		},
-		{ field: "lname", headerName: "Last name", width: 150,
+		{ field: "lname", headerName: "Last name", width: 150, align: 'center', headerAlign: 'center', 
 			renderCell: (params) => (
 				<Link to={`/student/${params.row.sid}/details/`} title="View student details">
 					{params.value}
 				</Link>
 			),
 		},
-		{ field: "cnp", headerName: "CNP", width: 150 },
-		{ field: "email", headerName: "Email", width: 200 },
-        { field: "phone", headerName: "Phone", width: 150 },
-        { field: "avg_grade", headerName: "Average", width: 150 },
-		{
-		  field: "operations",
-		  headerName: "Operations",
-		  width: 150,
-		  renderCell: (params) => (
-			<Container>
-				<IconButton component={Link} sx={{ mr: 3 }} to={`/student/${params.row.sid}/edit/`}>
-					<Tooltip title="Edit student" arrow>
-					<EditIcon color="primary" />
-					</Tooltip>
-				</IconButton>
-	  
-				<IconButton component={Link} sx={{ mr: 3 }} to={`/student/${params.row.sid}/remove/`}>
-					<Tooltip title="Delete student" arrow>
-					<DeleteForeverIcon sx={{ color: "red" }} />
-					</Tooltip>
-			    </IconButton>
-			</Container>
-		  ),
-		},
+		{ field: "cnp", headerName: "CNP", width: 150, align: 'center', headerAlign: 'center',  },
+		{ field: "email", headerName: "Email", width: 200, align: 'center', headerAlign: 'center',  },
+        { field: "phone", headerName: "Phone", width: 150, align: 'center', headerAlign: 'center',  },
+        { field: "avg_grade", headerName: "Average", width: 150, align: 'center', headerAlign: 'center', },
 	  ];
 	  
 	  const rows = students.map((student, index) => {
@@ -93,15 +73,13 @@ export const StudentByAverage = () => {
 			</h1>
 			{loading && <CircularProgress />}
 			{!loading && students.length === 0 && <p>No students found</p>}
-			{!loading && (
-				<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/student/`}>
-                        <ArrowBackIcon />
-                    </IconButton>{" "}
-			  </Box>
-			)}
             {!loading && students.length > 0 && (
-                <Container>
+				<Container>
+					<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
+						<IconButton component={Link} sx={{ mr: 3 }} to={`/student/`}>
+							<ArrowBackIcon />
+						</IconButton>{" "}
+					</Box>
                     <DataGrid
                         columns={columns}
                         rows={rows}

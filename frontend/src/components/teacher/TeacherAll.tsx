@@ -51,11 +51,8 @@ export const TeacherAll = () => {
 				</Link>
 			),
 		},
-		{ field: "rank", headerName: "Rank", width: 120, align: 'center', headerAlign: 'center',
-			renderCell: (params) => {
-				return getValue[params.value];
-			}
-		},	
+		{ field: "rank", headerName: "Rank", width: 120, align: 'center', headerAlign: 'center' },	
+		{ field: "courses", headerName: "# of courses", width: 100, align: 'center', headerAlign: 'center', },
 		{
 			field: "operations",
 			headerName: "Operations",
@@ -63,14 +60,14 @@ export const TeacherAll = () => {
 			align: 'center', headerAlign: 'center',
 			renderCell: (params) => (
 			  <Container>
-				  <IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/course/${params.row.cid}/edit/`}>
-					  <Tooltip title="Edit course" arrow>
+				  <IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/teacher/${params.row.tid}/edit/`}>
+					  <Tooltip title="Edit teacher" arrow>
 					  <EditIcon color="primary" />
 					  </Tooltip>
 				  </IconButton>
 		
-				  <IconButton component={Link} sx={{ mr: 3 }} to={`/course/${params.row.cid}/remove/`}>
-					  <Tooltip title="Delete course" arrow>
+				  <IconButton component={Link} sx={{ mr: 3 }} to={`/teacher/${params.row.tid}/remove/`}>
+					  <Tooltip title="Delete teacher" arrow>
 					  <DeleteForeverIcon sx={{ color: "red" }} />
 					  </Tooltip>
 				  </IconButton>
@@ -84,7 +81,8 @@ export const TeacherAll = () => {
 		  id: index + 1,
 		  fname: teacher.fname,
 		  lname: teacher.lname,
-		  rank: teacher.rank,
+		  rank: getValue[teacher.rank],
+		  courses: teacher.no_courses,
 		  tid: teacher.tid, // add the tid field to use it in the operations renderer
 		};
 	  });

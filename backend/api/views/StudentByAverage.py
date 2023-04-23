@@ -3,6 +3,8 @@ from django.db.models import \
 from django.db.models.functions import \
     Round, \
     Greatest
+from django.db.models import F
+
 from rest_framework import \
     generics
 

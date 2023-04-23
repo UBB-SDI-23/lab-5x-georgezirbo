@@ -8,16 +8,16 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Link } from "react-router-dom";
 import { Container } from "react-bootstrap";
 import AddIcon from "@mui/icons-material/Add";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { BACKEND_API_URL } from "../../../constants";
-import { BarChart } from "@mui/icons-material";
-
-export const CourseAll = () => {
+        
+export const CourseByNoStudents = () => {
 	const [courses, setCourses] = useState<Course[]>([]);
 	const [loading, setLoading] = useState(false);
   
 	useEffect(() => {
 	  setLoading(true);
-	  fetch(`${BACKEND_API_URL}course/`)
+	  fetch(`${BACKEND_API_URL}course/by-no-students/`)
 		.then((res) => res.json())
 		.then((data) => {
 			setCourses(data);
@@ -44,27 +44,6 @@ export const CourseAll = () => {
 		{ field: "year", headerName: "Year", width: 100, align: 'center', headerAlign: 'center', },
 		{ field: "teacher", headerName: "Teacher", width: 200, align: 'center', headerAlign: 'center' },
 		{ field: "students", headerName: "# of students", width: 100, align: 'center', headerAlign: 'center', },
-		{
-		  field: "operations",
-		  headerName: "Operations",
-		  width: 150,
-		  align: 'center', headerAlign: 'center',
-		  renderCell: (params) => (
-			<Container>
-				<IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/course/${params.row.cid}/edit/`}>
-					<Tooltip title="Edit course" arrow>
-					<EditIcon color="primary" />
-					</Tooltip>
-				</IconButton>
-	  
-				<IconButton component={Link} sx={{ mr: 3 }} to={`/course/${params.row.cid}/remove/`}>
-					<Tooltip title="Delete course" arrow>
-					<DeleteForeverIcon sx={{ color: "red" }} />
-					</Tooltip>
-				</IconButton>
-			</Container>
-		  ),
-		},
 	  ];
 	  
 	  const rows = courses.map((course, index) => {
@@ -83,25 +62,18 @@ export const CourseAll = () => {
 
 	
 	return (
-		<Container>
+		<Container style={{width:"1300px"}}>
 			<h1 style={{paddingBottom: "20px", paddingTop: "60px"}}>
-				Course List
+				Courses By No Students
 			</h1>
 			{loading && <CircularProgress />}
 			{!loading && courses.length === 0 && <p>No courses found</p>}
 			{!loading && courses.length > 0 && (
-				<Container style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', }}>
-					<Box sx={{display: 'flex', justifyContent: 'left', paddingBottom: "10px"}}>
-						<IconButton component={Link} sx={{ mr: 3 }} to={`/course/add/`}>
-							<Tooltip title="Add a new course" arrow>
-								<AddIcon sx={{color: "green"}} />
-							</Tooltip>
-						</IconButton>
-						<IconButton component={Link} sx={{ mr: 3 }} to={`/course/by-no-students/`}>
-							<Tooltip title="Sort By No Students" arrow>
-								<BarChart sx={{ color: "purple" }} />
-							</Tooltip>
-						</IconButton>
+				<Container style={{ display: 'flex', justifyContent: 'left', flexWrap: 'wrap', }}>
+					<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
+						<IconButton component={Link} sx={{ mr: 3 }} to={`/course/`}>
+							<ArrowBackIcon />
+						</IconButton>{" "}
 					</Box>
 					<DataGrid
 					columns={columns}
