@@ -16,5 +16,5 @@ class CoursesNoStudents(generics.ListAPIView):
         queryset = Course.objects\
             .annotate(no_students=Count('course_grades__student'))\
             .order_by('-no_students')
-        return queryset[:100]
+        return queryset
 
