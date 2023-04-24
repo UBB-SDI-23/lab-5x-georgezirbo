@@ -15,4 +15,4 @@ class StudentCreateList(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Student.objects\
             .annotate(no_courses=Count('student_grades__course'))
-        return queryset
+        return queryset[:100]

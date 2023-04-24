@@ -19,4 +19,4 @@ class GradeCreateList(generics.ListCreateAPIView):
         min_grade = self.request.query_params.get('final-gte')
         if min_grade is not None:
             queryset = queryset.filter(Q(session__gte=min_grade) | Q(retake__gte=min_grade))
-        return queryset
+        return queryset[:100]

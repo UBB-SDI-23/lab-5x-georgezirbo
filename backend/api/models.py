@@ -30,9 +30,9 @@ class Grade(models.Model):
 class Course(models.Model):
     cid = models.AutoField(primary_key=True)
     name = models.CharField(max_length=100)
-    university = models.CharField(max_length=100, null=False)
-    faculty = models.CharField(max_length=100)
-    department = models.CharField(max_length=100)
+    university = models.CharField(max_length=256, null=False)
+    faculty = models.CharField(max_length=256)
+    department = models.CharField(max_length=256)
     teacher = models.ForeignKey('Teacher', on_delete=models.CASCADE, verbose_name='Teacher', related_name='teacher_courses', db_column='teacher')
     year = models.PositiveIntegerField(default=2023, validators=[MinValueValidator(2000), MaxValueValidator(2023)], verbose_name='Year')
 
@@ -44,6 +44,7 @@ class Teacher(models.Model):
     fname = models.CharField(max_length=100, verbose_name="First Name")
     lname = models.CharField(max_length=100, verbose_name="Last Name")
     rank = models.CharField(max_length=1, verbose_name="Rank", choices=[('P', 'Professor'), ('A', 'Associate'), ('L', 'Lecturer')])
+    descr = models.TextField(verbose_name="Description", null=False)
 
     def __str__(self):
         return f"{self.fname} {self.lname} [{self.rank}]"

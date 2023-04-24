@@ -21,4 +21,4 @@ class StudentByAverage(generics.ListAPIView):
         queryset = Student.objects\
             .annotate(avg_grade=Round(Avg(Greatest('student_grades__session', 'student_grades__retake')),2))\
             .order_by(F('avg_grade').desc(nulls_last=True))
-        return queryset
+        return queryset[:100]
