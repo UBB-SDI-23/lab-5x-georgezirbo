@@ -16,21 +16,53 @@ import { BACKEND_API_URL } from "../../../constants";
 import { BarChart, Minimize} from "@mui/icons-material";
 import FilterAltIcon from '@mui/icons-material/FilterAlt'
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {Paginator} from "../Pagination"
 
 export const GradeFilter = () => {
 	const [grades, setGrades] = useState<Grade[]>([]);
     const [loading, setLoading] = useState(false);
     const [MinFinal, setMinFinal] = useState(0);
-  
-	useEffect(() => {
-	  setLoading(true);
-	  fetch(`${BACKEND_API_URL}grade/`)
-		.then((res) => res.json())
-		.then((data) => {
-			setGrades(data);
-			setLoading(false);
-		});
-    }, []);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(25);
+    const [totalRows, setTotalRows] = useState(0);
+    const crt = (page - 1) * pageSize + 1;
+    const [isLastPage, setIsLastPage] = useState(false);
+
+    const setCurrentPage = (newPage: number) => {
+        setPage(newPage);
+    }
+
+    const goToNextPage = () => {
+        if (isLastPage) {
+            return;
+        }
+
+        setPage(page + 1);
+    }
+
+    const goToPrevPage = () => {
+        if (page === 1) {
+            return;
+        }
+
+        setPage(page - 1);
+    }
+
+    const fetchGrades = async () => {
+        setLoading(true);
+        const response = await fetch(
+          `${BACKEND_API_URL}grade/?final-gte=${MinFinal}/?page=${page}&page_size=${pageSize}`
+        );
+        const { count, next, previous, results } = await response.json();
+        setGrades(results);
+        setTotalRows(count);
+        setIsLastPage(!next);
+        setLoading(false);
+      };
+    
+      useEffect(() => {
+        fetchGrades();
+      }, [page]);
     
     const handleFilterClick = () => {
         setLoading(true);
@@ -103,7 +135,16 @@ export const GradeFilter = () => {
 					columns={columns}
 					rows={rows}
 					autoHeight
+					hideFooter={true}
 					/>
+					<Paginator
+            rowsPerPage={pageSize}
+            totalRows={totalRows}
+            currentPage={page}
+            setPage={setCurrentPage}
+            goToNextPage={goToNextPage}
+            goToPrevPage={goToPrevPage}
+        />
 				</Container>
 			)}
 		</Container>

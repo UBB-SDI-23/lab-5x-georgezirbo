@@ -10,20 +10,53 @@ import { Container } from "react-bootstrap";
 import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { BACKEND_API_URL } from "../../../constants";
+import {Paginator} from "../Pagination"
         
 export const CourseByNoStudents = () => {
 	const [courses, setCourses] = useState<Course[]>([]);
 	const [loading, setLoading] = useState(false);
-  
-	useEffect(() => {
-	  setLoading(true);
-	  fetch(`${BACKEND_API_URL}course/by-no-students/`)
-		.then((res) => res.json())
-		.then((data) => {
-			setCourses(data);
-			setLoading(false);
-		});
-	}, []);
+	const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(25);
+    const [totalRows, setTotalRows] = useState(0);
+    const crt = (page - 1) * pageSize + 1;
+    const [isLastPage, setIsLastPage] = useState(false);
+
+    const setCurrentPage = (newPage: number) => {
+        setPage(newPage);
+    }
+
+    const goToNextPage = () => {
+        if (isLastPage) {
+            return;
+        }
+
+        setPage(page + 1);
+    }
+
+    const goToPrevPage = () => {
+        if (page === 1) {
+            return;
+        }
+
+        setPage(page - 1);
+    }
+
+    const fetchCourses = async () => {
+        setLoading(true);
+        const response = await fetch(
+          `${BACKEND_API_URL}course/by-no-students/?page=${page}&page_size=${pageSize}`
+        );
+        const { count, next, previous, results } = await response.json();
+        setCourses(results);
+        setTotalRows(count);
+        setIsLastPage(!next);
+        setLoading(false);
+      };
+    
+      useEffect(() => {
+        fetchCourses();
+      }, [page]);
+
   
 	if (!loading && courses.length === 0) {
 	  return <div>No courses</div>;
@@ -62,14 +95,14 @@ export const CourseByNoStudents = () => {
 
 	
 	return (
-		<Container style={{width:"1300px"}}>
+		<Container>
 			<h1 style={{paddingBottom: "20px", paddingTop: "60px"}}>
 				Courses By No Students
 			</h1>
 			{loading && <CircularProgress />}
 			{!loading && courses.length === 0 && <p>No courses found</p>}
 			{!loading && courses.length > 0 && (
-				<Container style={{ display: 'flex', justifyContent: 'left', flexWrap: 'wrap', }}>
+				<Container style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', }}>
 					<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
 						<IconButton component={Link} sx={{ mr: 3 }} to={`/course/`}>
 							<ArrowBackIcon />
@@ -79,7 +112,16 @@ export const CourseByNoStudents = () => {
 					columns={columns}
 					rows={rows}
 					autoHeight
+					hideFooter={true}
 					/>
+					<Paginator
+                        rowsPerPage={pageSize}
+                        totalRows={totalRows}
+                        currentPage={page}
+                        setPage={setCurrentPage}
+                        goToNextPage={goToNextPage}
+                        goToPrevPage={goToPrevPage}
+                    />
 				</Container>
 			)}
 		</Container>

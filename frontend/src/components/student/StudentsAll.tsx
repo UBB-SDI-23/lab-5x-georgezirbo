@@ -10,20 +10,51 @@ import { Container } from "react-bootstrap";
 import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
+import {Paginator} from "../Pagination"
 
 export const StudentAll = () => {
 	const [students, setStudents] = useState<Student[]>([]);
 	const [loading, setLoading] = useState(false);
-  
-	useEffect(() => {
-	  setLoading(true);
-	  fetch(`${BACKEND_API_URL}student/`)
-		.then((res) => res.json())
-		.then((data) => {
-			setStudents(data);
-			setLoading(false);
-		});
-	}, []);
+	const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(25);
+    const [totalRows, setTotalRows] = useState(0);
+    const crt = (page - 1) * pageSize + 1;
+    const [isLastPage, setIsLastPage] = useState(false);
+
+    const setCurrentPage = (newPage: number) => {
+        setPage(newPage);
+    }
+
+    const goToNextPage = () => {
+        if (isLastPage) {
+            return;
+        }
+        setPage(page + 1);
+    }
+
+    const goToPrevPage = () => {
+        if (page === 1) {
+            return;
+        }
+
+        setPage(page - 1);
+    }
+
+    const fetchStudents = async () => {
+        setLoading(true);
+        const response = await fetch(
+          `${BACKEND_API_URL}student/?page=${page}&page_size=${pageSize}`
+        );
+        const { count, next, previous, results } = await response.json();
+        setStudents(results);
+        setTotalRows(count);
+        setIsLastPage(!next);
+        setLoading(false);
+      };
+    
+      useEffect(() => {
+        fetchStudents();
+      }, [page]);
   
 	if (!loading && students.length === 0) {
 	  return <div>No students</div>;
@@ -113,6 +144,15 @@ export const StudentAll = () => {
 					columns={columns}
 					rows={rows}
 					autoHeight
+					hideFooter={true}
+					/>
+					<Paginator
+						rowsPerPage={pageSize}
+						totalRows={totalRows}
+						currentPage={page}
+						setPage={setCurrentPage}
+						goToNextPage={goToNextPage}
+						goToPrevPage={goToPrevPage}
 					/>
 				</Container>
 			)}

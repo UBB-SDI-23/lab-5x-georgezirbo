@@ -11,21 +11,53 @@ import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import FilterAltIcon from '@mui/icons-material/FilterAlt'
+import {Paginator} from "../Pagination"
 
 export const GradeAll = () => {
 	const [grades, setGrades] = useState<Grade[]>([]);
 	const [loading, setLoading] = useState(false);
-  
-	useEffect(() => {
-	  setLoading(true);
-	  fetch(`${BACKEND_API_URL}grade/`)
-		.then((res) => res.json())
-		.then((data) => {
-			setGrades(data);
-			setLoading(false);
-		});
-	}, []);
-  
+	const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(25);
+    const [totalRows, setTotalRows] = useState(0);
+    const crt = (page - 1) * pageSize + 1;
+    const [isLastPage, setIsLastPage] = useState(false);
+
+    const setCurrentPage = (newPage: number) => {
+        setPage(newPage);
+    }
+
+    const goToNextPage = () => {
+        if (isLastPage) {
+            return;
+        }
+
+        setPage(page + 1);
+    }
+
+    const goToPrevPage = () => {
+        if (page === 1) {
+            return;
+        }
+
+        setPage(page - 1);
+    }
+
+    const fetchGrades = async () => {
+        setLoading(true);
+        const response = await fetch(
+          `${BACKEND_API_URL}grade/?page=${page}&page_size=${pageSize}`
+        );
+        const { count, next, previous, results } = await response.json();
+        setGrades(results);
+        setTotalRows(count);
+        setIsLastPage(!next);
+        setLoading(false);
+      };
+    
+      useEffect(() => {
+        fetchGrades();
+      }, [page]);
+
 	if (!loading && grades.length === 0) {
 	  return <div>No grades</div>;
 	}
@@ -101,12 +133,21 @@ export const GradeAll = () => {
 			  </Box>
 			)}
 			{!loading && grades.length > 0 && (
-				<Container style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap',}}>
+				<Container style={{display: 'flex', justifyContent: 'center',}}>
 					<DataGrid
 					columns={columns}
 					rows={rows}
 					autoHeight
+					hideFooter={true}
 					/>
+					<Paginator
+                        rowsPerPage={pageSize}
+                        totalRows={totalRows}
+                        currentPage={page}
+                        setPage={setCurrentPage}
+                        goToNextPage={goToNextPage}
+                        goToPrevPage={goToPrevPage}
+                    />
 				</Container>
 			)}
 		</Container>

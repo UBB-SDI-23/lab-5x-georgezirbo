@@ -10,20 +10,53 @@ import { Container } from "react-bootstrap";
 import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
+import {Paginator} from "../Pagination"
 
 export const CourseAll = () => {
 	const [courses, setCourses] = useState<Course[]>([]);
 	const [loading, setLoading] = useState(false);
-  
-	useEffect(() => {
-	  setLoading(true);
-	  fetch(`${BACKEND_API_URL}course/`)
-		.then((res) => res.json())
-		.then((data) => {
-			setCourses(data);
-			setLoading(false);
-		});
-	}, []);
+	const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(25);
+    const [totalRows, setTotalRows] = useState(0);
+    const crt = (page - 1) * pageSize + 1;
+    const [isLastPage, setIsLastPage] = useState(false);
+
+    const setCurrentPage = (newPage: number) => {
+        setPage(newPage);
+    }
+
+    const goToNextPage = () => {
+        if (isLastPage) {
+            return;
+        }
+
+        setPage(page + 1);
+    }
+
+    const goToPrevPage = () => {
+        if (page === 1) {
+            return;
+        }
+
+        setPage(page - 1);
+    }
+
+    const fetchCourses = async () => {
+        setLoading(true);
+        const response = await fetch(
+          `${BACKEND_API_URL}course/?page=${page}&page_size=${pageSize}`
+        );
+        const { count, next, previous, results } = await response.json();
+        setCourses(results);
+        setTotalRows(count);
+        setIsLastPage(!next);
+        setLoading(false);
+      };
+    
+      useEffect(() => {
+        fetchCourses();
+      }, [page]);
+
   
 	if (!loading && courses.length === 0) {
 	  return <div>No courses</div>;
@@ -107,7 +140,16 @@ export const CourseAll = () => {
 					columns={columns}
 					rows={rows}
 					autoHeight
+					hideFooter={true}
 					/>
+					<Paginator
+                        rowsPerPage={pageSize}
+                        totalRows={totalRows}
+                        currentPage={page}
+                        setPage={setCurrentPage}
+                        goToNextPage={goToNextPage}
+                        goToPrevPage={goToPrevPage}
+                    />
 				</Container>
 			)}
 		</Container>
