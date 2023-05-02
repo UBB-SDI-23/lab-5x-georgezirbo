@@ -5,22 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="068c48b9-e7d0-4f85-83d5-d2b9ad7c6fa6" name="Changes" comment="views">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views/CourseCreateList.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views/CourseCreateList.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views/CourseNoStudents.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views/CourseNoStudents.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views/GradeCreateList.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views/GradeCreateList.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views/StudentByAverage.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views/StudentByAverage.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views/StudentCreateList.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views/StudentCreateList.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/views/TeacherCreateList.py" beforeDir="false" afterPath="$PROJECT_DIR$/api/views/TeacherCreateList.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/constants.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/constants.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/course/CourseAll.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/course/CourseAll.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/course/CourseByNoStudents.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/course/CourseByNoStudents.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/grade/GradeAll.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/grade/GradeAll.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/grade/GradeDetails.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/grade/GradeDetails.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/grade/GradeFilter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/grade/GradeFilter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../frontend/src/components/Pagination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/Pagination.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../frontend/src/components/student/StudentByAverage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/student/StudentByAverage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/student/StudentsAll.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/student/StudentsAll.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../frontend/src/components/teacher/TeacherAll.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/../frontend/src/components/teacher/TeacherAll.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,6 +79,7 @@
       <workItem from="1682164763132" duration="2663000" />
       <workItem from="1682171979593" duration="2201000" />
       <workItem from="1682326111529" duration="1930000" />
+      <workItem from="1682984614122" duration="77000" />
     </task>
     <task id="LOCAL-00001" summary="viewa">
       <created>1682097671698</created>

@@ -1,7 +1,8 @@
 import { debounce } from "lodash";
 import { useCallback, useEffect } from "react";
-import { Box, IconButton, TextField, Typography } from '@mui/material';
-import {ArrowForward, ArrowBack } from '@mui/icons-material'
+import { Box, IconButton, TextField, Typography, Container } from '@mui/material';
+import { ArrowForward, ArrowBack } from '@mui/icons-material'
+import { useState } from "react";
 
 interface PaginatorProps {
     rowsPerPage: number;
@@ -37,8 +38,18 @@ export const Paginator = ({ rowsPerPage, totalRows, currentPage,  setPage, goToN
             debounceOnChange.cancel();
         };
     }, [debounceOnChange])
+    const [buttons, setButtons] = useState<(string | "...")[]>([]);
+
+    const generateButtons = (position: number ) => {
+        const buttons: string[] = [];
+        for (let i = 1; i <= 5; i++) {
+          buttons.push(`<button>${i}</button>`);
+        }
+        setButtons(buttons);
+      }
 
     return (
+
         <Box display="flex" alignItems="center">
             <IconButton
                 color="primary"

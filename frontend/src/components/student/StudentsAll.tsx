@@ -10,56 +10,60 @@ import { Container } from "react-bootstrap";
 import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
-import {Paginator} from "../Pagination"
+import {Paginator} from "../Pagination";
 
 export const StudentAll = () => {
 	const [students, setStudents] = useState<Student[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(25);
-    const [totalRows, setTotalRows] = useState(0);
-    const crt = (page - 1) * pageSize + 1;
-    const [isLastPage, setIsLastPage] = useState(false);
+	const [pageSize, setPageSize] = useState(25);
+	const [totalRows, setTotalRows] = useState(0);
+	const crt = (page - 1) * pageSize + 1;
+	const [isLastPage, setIsLastPage] = useState(false);
 
-    const setCurrentPage = (newPage: number) => {
-        setPage(newPage);
-    }
-
-    const goToNextPage = () => {
-        if (isLastPage) {
-            return;
-        }
-        setPage(page + 1);
-    }
-
-    const goToPrevPage = () => {
-        if (page === 1) {
-            return;
-        }
-
-        setPage(page - 1);
-    }
-
-    const fetchStudents = async () => {
-        setLoading(true);
-        const response = await fetch(
-          `${BACKEND_API_URL}student/?page=${page}&page_size=${pageSize}`
-        );
-        const { count, next, previous, results } = await response.json();
-        setStudents(results);
-        setTotalRows(count);
-        setIsLastPage(!next);
-        setLoading(false);
-      };
-    
-      useEffect(() => {
-        fetchStudents();
-      }, [page]);
-  
-	if (!loading && students.length === 0) {
-	  return <div>No students</div>;
+	const setCurrentPage = (newPage: number) => {
+		setPage(newPage);
 	}
-  
+
+	const goToNextPage = () => {
+		if (isLastPage) {
+			return;
+		}
+
+		setPage(page + 1);
+	}
+
+	const goToPrevPage = () => {
+		if (page === 1) {
+			return;
+		}
+
+		setPage(page - 1);
+	}
+
+	const fetchStudents = async () => {
+		setLoading(true);
+		const start=new Date().getTime()
+		const response = await fetch(
+			`${BACKEND_API_URL}student/?page=${page}&page_size=${pageSize}`
+		);
+		console.log(new Date().getTime() - start)
+		const { count, next, previous, results } = await response.json();
+		setStudents(results);
+		console.log(students);
+		setTotalRows(count);
+		setIsLastPage(!next);
+		setLoading(false);
+	};
+
+	useEffect(() => {
+		fetchStudents();
+	}, [page]);
+
+	if (!loading && students.length === 0) {
+		return <div>No students</div>;
+	}
+
 	const columns: GridColDef[] = [
 		{ field: "id", headerName: "#", width: 20 },
 		{ field: "fname", headerName: "First name", width: 100, align: 'center', headerAlign: 'center',
@@ -86,37 +90,37 @@ export const StudentAll = () => {
 			width: 150,
 			align: 'center', headerAlign: 'center',
 			renderCell: (params) => (
-			  <Container>
-				  <IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/student/${params.row.sid}/edit/`}>
-					  <Tooltip title="Edit course" arrow>
-					  <EditIcon color="primary" />
-					  </Tooltip>
-				  </IconButton>
-		
-				  <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${params.row.sid}/remove/`}>
-					  <Tooltip title="Delete course" arrow>
-					  <DeleteForeverIcon sx={{ color: "red" }} />
-					  </Tooltip>
-				  </IconButton>
-			  </Container>
-			),
-		  },
-	  ];
-	  
-	  const rows = students.map((student, index) => {
-		return {
-		  id: index + 1,
-		  fname: student.fname,
-		  lname: student.lname,
-		  cnp: student.cnp,
-		  email: student.email,
-		  phone: student.phone,
-		  courses: student.no_courses,
-		  sid: student.sid, // add the sid field to use it in the operations renderer
-		};
-	  });
+				<Container>
+					<IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/student/${params.row.sid}/edit/`}>
+						<Tooltip title="Edit course" arrow>
+							<EditIcon color="primary" />
+						</Tooltip>
+					</IconButton>
 
-	
+					<IconButton component={Link} sx={{ mr: 3 }} to={`/student/${params.row.sid}/remove/`}>
+						<Tooltip title="Delete course" arrow>
+							<DeleteForeverIcon sx={{ color: "red" }} />
+						</Tooltip>
+					</IconButton>
+				</Container>
+			),
+		},
+	];
+
+	const rows = students.map((student, index) => {
+		return {
+			id: index + 1,
+			fname: student.fname,
+			lname: student.lname,
+			cnp: student.cnp,
+			email: student.email,
+			phone: student.phone,
+			courses: student.no_courses,
+			sid: student.sid, // add the sid field to use it in the operations renderer
+		};
+	});
+
+
 	return (
 		<Container>
 			<h1 style={{paddingBottom: "20px", paddingTop: "60px"}}>
@@ -136,15 +140,14 @@ export const StudentAll = () => {
 							<BarChart sx={{ color: "purple" }} />
 						</Tooltip>
 					</IconButton>
-			  </Box>
+				</Box>
 			)}
 			{!loading && students.length > 0 && (
 				<Container style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap',}}>
 					<DataGrid
-					columns={columns}
-					rows={rows}
-					autoHeight
-					hideFooter={true}
+						columns={columns}
+						rows={rows}
+						autoHeight
 					/>
 					<Paginator
 						rowsPerPage={pageSize}
@@ -157,7 +160,7 @@ export const StudentAll = () => {
 				</Container>
 			)}
 		</Container>
-	  );
-	  
-	  
-  };
+	);
+
+
+};

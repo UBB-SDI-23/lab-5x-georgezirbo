@@ -133,7 +133,7 @@ export const GradeEdit = () => {
 							id="course"
 							options={courses}
 							getOptionLabel={(option) => `${option.name} @ ${option.university} - ${option.faculty}]: (${option.year})`}
-							renderInput={(params) => <TextField {...params} label="Course" variant="outlined" sx={{ mb: 2 }}/>}
+							renderInput={(params) => <TextField {...params} label="Course" variant="outlined" placeholder={grade.course_name} sx={{ mb: 2 }}/>}
 							filterOptions={(x) => x}
 							onInputChange={handleCourseChange}
 							onChange={(event, value) => {

@@ -44,7 +44,7 @@ export const StudentByAverage = () => {
     const fetchStudents = async () => {
         setLoading(true);
         const response = await fetch(
-          `${BACKEND_API_URL}student/by-average//?page=${page}&page_size=${pageSize}`
+          `${BACKEND_API_URL}student/by-average/?page=${page}&page_size=${pageSize}`
         );
         const { count, next, previous, results } = await response.json();
         setStudents(results);
