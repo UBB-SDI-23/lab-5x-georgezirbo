@@ -25,7 +25,8 @@ export const TeacherEdit = () => {
     const [teacher, setTeacher] = useState<Teacher>({
         fname: "",
         lname: "",
-        rank: ""
+        rank: "",
+        descr: ""
     });
 
     const getKey: {[key: string]: string} = {
@@ -103,7 +104,6 @@ export const TeacherEdit = () => {
 							helperText={validateLname && !isLnameValid ? 'Invalid last name.':''}
 							onFocus={() => setValidateLname(true)}
                         />
-
                         <TextField
                             id="rank"
                             label="Rank"
@@ -118,7 +118,14 @@ export const TeacherEdit = () => {
 							<MenuItem value="Lecturer" onClick={() => teacher.rank = 'L'}>Lecturer</MenuItem>
 							<MenuItem value="Associate" onClick={() => teacher.rank = 'A'}>Associate</MenuItem>
 						</TextField>
-
+                        <TextField
+                            id="descr"
+                            label="Description"
+                            variant="outlined"
+                            value={teacher.descr}
+                            sx={{ mb: 2}}
+                            onChange={(event) => setTeacher({ ...teacher, descr: event.target.value })}
+                        />
 
 						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Edit Teacher</Button>
 					</form>

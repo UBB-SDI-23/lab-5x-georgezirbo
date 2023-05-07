@@ -109,7 +109,7 @@ export const GradeEdit = () => {
         event.preventDefault();
         try{
             await axios.put(`${BACKEND_API_URL}grade/${gradeID}/`, grade);
-            navigate(`/grade/`);
+			navigate(`/grade/${gradeID}/details/`);
         }catch(error){
             console.log(error);
             alert(error);

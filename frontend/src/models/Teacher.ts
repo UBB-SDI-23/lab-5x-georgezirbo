@@ -5,6 +5,7 @@ export interface Teacher {
     fname: string;
     lname: string;
     rank: string;
+    descr: string;
     courses?: Course[];
     no_courses?: number;
 }

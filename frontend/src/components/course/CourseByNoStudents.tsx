@@ -43,9 +43,11 @@ export const CourseByNoStudents = () => {
 
     const fetchCourses = async () => {
         setLoading(true);
+		const start = new Date().getTime()
         const response = await fetch(
           `${BACKEND_API_URL}course/by-no-students/?page=${page}&page_size=${pageSize}`
         );
+		console.log(`GET COURSES BY NO STUDENTS: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
         setCourses(results);
         setTotalRows(count);
@@ -87,7 +89,7 @@ export const CourseByNoStudents = () => {
 		  faculty: course.faculty,
 		  department: course.department,
 		  year: course.year,
-		  teacher: course?.teacher_fname + " " + course?.teacher_lname,
+		  teacher: course?.teacher_name,
 		  students: course.no_students,
 		  cid: course.cid, // add the cid field to use it in the operations renderer
 		};
@@ -103,7 +105,7 @@ export const CourseByNoStudents = () => {
 			{!loading && courses.length === 0 && <p>No courses found</p>}
 			{!loading && courses.length > 0 && (
 				<Container style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', }}>
-					<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
+					<Box sx={{paddingBottom: "10px"}}>
 						<IconButton component={Link} sx={{ mr: 3 }} to={`/course/`}>
 							<ArrowBackIcon />
 						</IconButton>{" "}
@@ -119,8 +121,6 @@ export const CourseByNoStudents = () => {
                         totalRows={totalRows}
                         currentPage={page}
                         setPage={setCurrentPage}
-                        goToNextPage={goToNextPage}
-                        goToPrevPage={goToPrevPage}
                     />
 				</Container>
 			)}

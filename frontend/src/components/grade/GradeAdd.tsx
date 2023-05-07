@@ -93,8 +93,9 @@ export const GradeAdd = () => {
 		event.preventDefault();
         try {
             console.log(grade);
-            await axios.post(`${BACKEND_API_URL}grade/`, grade);
-            navigate('/grade/');
+            const response = await axios.post(`${BACKEND_API_URL}grade/`, grade);
+            const gid = response.data.gid
+			navigate(`/grade/${gid}/details`);
         } catch (error) {
             alert("The introduced grade could not be added.")
 			console.log(error);

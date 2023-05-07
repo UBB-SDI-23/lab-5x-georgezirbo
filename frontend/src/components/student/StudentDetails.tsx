@@ -10,6 +10,8 @@ import axios from "axios";
 import { BACKEND_API_URL } from "../../../constants";
 import { Tooltip } from "react-bootstrap";
 import { List, ListItem, ListItemText, Grid } from "@mui/material";
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+
 
 export const StudentDetails = () => {
 	const { studentID } = useParams();
@@ -23,8 +25,8 @@ export const StudentDetails = () => {
           try {
               const response = await fetch(`${BACKEND_API_URL}student/${studentID}/`);
               console.log(response);
-            const data = await response.json();
-            setStudent(data);
+              const data = await response.json();
+              setStudent(data);
           } catch (error) {
             console.error(error);
           } finally {
@@ -34,9 +36,10 @@ export const StudentDetails = () => {
         fetchStudent();
       }, [studentID]);
 
-	return (
-        <Container>
-            <h1 style={{paddingBottom: "25px"}}>
+	// @ts-ignore
+    return (
+        <Container style={{paddingTop: 100}}>
+            <h1>
 			    Student Details
 			</h1>
             <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
@@ -46,19 +49,32 @@ export const StudentDetails = () => {
             </Box>
 			<Card>
                 <CardContent>
-                    <p>First Name: {student?.fname}</p>
-                    <p>Last Name: {student?.lname}</p>
-                    <p>CNP: {student?.cnp}</p>
-                    <p>Email: {student?.email}</p>
-                    <p>Phone: {student?.phone}</p>
+                    <p><b>First Name</b>: {student?.fname}</p>
+                    <p><b>Last Name</b>: {student?.lname}</p>
+                    <p><b>CNP</b>: {student?.cnp}</p>
+                    <p><b>Email</b>: {student?.email}</p>
+                    <p><b>Phone</b>: {student?.phone}</p>
                     <p style={{ marginBottom: 0, fontWeight: 'bold'}}>Grades: </p>
-                    <List>
-                        {student?.grades?.map((grade) => (
-                            <ListItem style={{ display: 'flex', justifyContent: 'center' }} key={grade.gid}>
-                                {grade.course_name + ': ' + Math.max(grade.session, grade.retake)}
-                            </ListItem>
-                        ))}
-                    </List>
+                    {student?.grades && student.grades.length > 0 &&
+                    <TableContainer style={{ maxHeight: 325 , marginTop: 15}}>
+                        <Table style={{ border: '1px solid gray' }}>
+                            <TableHead sx={{ bgcolor: 'grey.400'}}>
+                                <TableRow>
+                                    <TableCell style={{ borderRight: '1px solid gray' }}>Course Name</TableCell>
+                                    <TableCell align="center">Grade</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {student?.grades?.map((grade) => (
+                                    <TableRow key={grade.gid}>
+                                        <TableCell style={{ borderRight: '1px solid gray' }}>{grade.course_name}</TableCell>
+                                        <TableCell align="center">{Math.max(grade.session, grade.retake)}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    }
             </CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
 				<CardActions>

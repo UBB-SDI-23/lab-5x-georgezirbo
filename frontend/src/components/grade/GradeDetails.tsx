@@ -46,10 +46,10 @@ export const GradeDetails = () => {
             </Box>
 			<Card>
                 <CardContent>
-                    <p>Course: {grade?.course_name}</p>
-                    <p>Student: {grade?.student_fname + " " + grade?.student_lname}</p>
-                    <p>Session: {grade?.session}</p>
-                    <p>Retake: {grade?.retake}</p>
+                    <p><b>Course</b>: {grade?.course_name}</p>
+                    <p><b>Student</b>: {grade?.student_name}</p>
+                    <p><b>Session</b>: {grade?.session}</p>
+                    <p><b>Retake</b>: {grade?.retake}</p>
             </CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
 				<CardActions>

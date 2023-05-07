@@ -43,9 +43,11 @@ export const StudentByAverage = () => {
 
     const fetchStudents = async () => {
         setLoading(true);
+		const start = new Date().getTime();
         const response = await fetch(
           `${BACKEND_API_URL}student/by-average/?page=${page}&page_size=${pageSize}`
         );
+		console.log(`GET STUDENTS BY AVERAGE: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
         setStudents(results);
         setTotalRows(count);
@@ -106,7 +108,7 @@ export const StudentByAverage = () => {
 			{!loading && students.length === 0 && <p>No students found</p>}
             {!loading && students.length > 0 && (
 				<Container>
-					<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
+					<Box sx={{paddingBottom: "10px"}}>
 						<IconButton component={Link} sx={{ mr: 3 }} to={`/student/`}>
 							<ArrowBackIcon />
 						</IconButton>{" "}
@@ -122,8 +124,6 @@ export const StudentByAverage = () => {
 						totalRows={totalRows}
 						currentPage={page}
 						setPage={setCurrentPage}
-						goToNextPage={goToNextPage}
-						goToPrevPage={goToPrevPage}
 					/>
                 </Container>
 			)}

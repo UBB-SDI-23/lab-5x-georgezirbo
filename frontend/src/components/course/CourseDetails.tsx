@@ -1,4 +1,15 @@
-import { Card, CardActions, CardContent, IconButton, Box } from "@mui/material";
+import {
+    Card,
+    CardActions,
+    CardContent,
+    IconButton,
+    Box,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    TableBody, TableContainer
+} from "@mui/material";
 import { Container } from "@mui/system";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
@@ -35,8 +46,8 @@ export const CourseDetails = () => {
       }, [courseID]);
 
 	return (
-        <Container>
-            <h1 style={{paddingBottom: "25px"}}>
+        <Container style={{paddingTop: 100}}>
+            <h1>
 			    Course Details
 			</h1>
             <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
@@ -46,20 +57,33 @@ export const CourseDetails = () => {
             </Box>
 			<Card>
                 <CardContent>
-                    <p>Name: {course?.name}</p>
-                    <p>University: {course?.university}</p>
-                    <p>Faculty: {course?.faculty}</p>
-                    <p>Department: {course?.department}</p>
-                    <p>Year: {course?.year}</p>
-                    {/* <p>Teacher: {course?.teacher}</p> */}
+                    <p><b>Name</b>: {course?.name}</p>
+                    <p><b>University</b>: {course?.university}</p>
+                    <p><b>Faculty</b>: {course?.faculty}</p>
+                    <p><b>Department</b>: {course?.department}</p>
+                    <p><b>Year</b>: {course?.year}</p>
+                    <p><b>Teacher</b>: {course?.teacher_name}</p>
                     <p style={{ marginBottom: 0, fontWeight: 'bold'}}>Grades: </p>
-                    <List>
-                        {course?.grades?.map((grade) => (
-                            <ListItem style={{ display: 'flex', justifyContent: 'center' }} key={grade.gid}>
-                                {grade.student_fname + " " + grade.student_lname + ': ' + Math.max(grade.session, grade.retake)}
-                            </ListItem>
-                        ))}
-                    </List>
+                    {course?.grades && course.grades.length > 0 &&
+                    <TableContainer style={{ maxHeight: 325 , marginTop: 15}}>
+                        <Table style={{ border: '1px solid gray' }}>
+                            <TableHead sx={{ bgcolor: 'grey.400'}}>
+                                <TableRow>
+                                    <TableCell style={{ borderRight: '1px solid gray' }}>Student</TableCell>
+                                    <TableCell align="center">Grade</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {course?.grades?.map((grade) => (
+                                    <TableRow key={grade.gid}>
+                                        <TableCell style={{ borderRight: '1px solid gray' }}>{grade.student_name}</TableCell>
+                                        <TableCell align="center">{Math.max(grade.session, grade.retake)}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    }
             </CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
 				<CardActions>

@@ -43,9 +43,11 @@ export const CourseAll = () => {
 
     const fetchCourses = async () => {
         setLoading(true);
+		const start = new Date().getTime()
         const response = await fetch(
           `${BACKEND_API_URL}course/?page=${page}&page_size=${pageSize}`
         );
+		console.log(`GET COURSES: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
         setCourses(results);
         setTotalRows(count);
@@ -75,7 +77,13 @@ export const CourseAll = () => {
 		{ field: "faculty", headerName: "Faculty", width: 250 },
 		{ field: "department", headerName: "Department", width: 200,  },
 		{ field: "year", headerName: "Year", width: 100, align: 'center', headerAlign: 'center', },
-		{ field: "teacher", headerName: "Teacher", width: 200, align: 'center', headerAlign: 'center' },
+		{ field: "teacher", headerName: "Teacher", width: 200, align: 'center', headerAlign: 'center',
+			renderCell: (params) => (
+				<Link to={`/teacher/${courses[params.row.id-1]?.teacher}/details/`} title="View teacher details">
+					{params.value}
+				</Link>
+			),
+		},
 		{ field: "students", headerName: "# of students", width: 100, align: 'center', headerAlign: 'center', },
 		{
 		  field: "operations",
@@ -99,6 +107,7 @@ export const CourseAll = () => {
 		  ),
 		},
 	  ];
+
 	  
 	  const rows = courses.map((course, index) => {
 		return {
@@ -108,7 +117,7 @@ export const CourseAll = () => {
 		  faculty: course.faculty,
 		  department: course.department,
 		  year: course.year,
-		  teacher: course?.teacher_fname + " " + course?.teacher_lname,
+		  teacher: course?.teacher_name,
 		  students: course.no_students,
 		  cid: course.cid, // add the cid field to use it in the operations renderer
 		};
@@ -116,26 +125,28 @@ export const CourseAll = () => {
 
 	
 	return (
-		<Container>
+		<Container style={{flexDirection: 'column'}}>
 			<h1 style={{paddingBottom: "20px", paddingTop: "60px"}}>
 				Course List
 			</h1>
 			{loading && <CircularProgress />}
 			{!loading && courses.length === 0 && <p>No courses found</p>}
+			{!loading && (
+				<Box sx={{paddingBottom: "10px"}}>
+				<IconButton component={Link} sx={{ mr: 3 }} to={`/course/add/`}>
+					<Tooltip title="Add a new course" arrow>
+						<AddIcon sx={{color: "green"}} />
+					</Tooltip>
+				</IconButton>
+				<IconButton component={Link} sx={{ mr: 3 }} to={`/course/by-no-students/`}>
+					<Tooltip title="Sort By No Students" arrow>
+						<BarChart sx={{ color: "purple" }} />
+					</Tooltip>
+				</IconButton>
+			</Box>
+			)}
 			{!loading && courses.length > 0 && (
-				<Container style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', }}>
-					<Box sx={{display: 'flex', justifyContent: 'left', paddingBottom: "10px"}}>
-						<IconButton component={Link} sx={{ mr: 3 }} to={`/course/add/`}>
-							<Tooltip title="Add a new course" arrow>
-								<AddIcon sx={{color: "green"}} />
-							</Tooltip>
-						</IconButton>
-						<IconButton component={Link} sx={{ mr: 3 }} to={`/course/by-no-students/`}>
-							<Tooltip title="Sort By No Students" arrow>
-								<BarChart sx={{ color: "purple" }} />
-							</Tooltip>
-						</IconButton>
-					</Box>
+				<Container style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>
 					<DataGrid
 					columns={columns}
 					rows={rows}
@@ -147,8 +158,6 @@ export const CourseAll = () => {
                         totalRows={totalRows}
                         currentPage={page}
                         setPage={setCurrentPage}
-                        goToNextPage={goToNextPage}
-                        goToPrevPage={goToPrevPage}
                     />
 				</Container>
 			)}

@@ -93,7 +93,7 @@ export const CourseEdit = () => {
         event.preventDefault();
         try{
             await axios.put(`${BACKEND_API_URL}course/${courseID}/`, course);
-            navigate(`/course/`);
+			navigate(`/course/${courseID}/details/`);
         }catch(error){
             console.log(error);
             alert(error);

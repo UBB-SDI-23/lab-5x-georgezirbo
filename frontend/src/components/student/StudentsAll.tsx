@@ -47,10 +47,9 @@ export const StudentAll = () => {
 		const response = await fetch(
 			`${BACKEND_API_URL}student/?page=${page}&page_size=${pageSize}`
 		);
-		console.log(new Date().getTime() - start)
+		console.log(`GET STUDENTS: ${(new Date().getTime() - start)/1000} seconds`)
 		const { count, next, previous, results } = await response.json();
 		setStudents(results);
-		console.log(students);
 		setTotalRows(count);
 		setIsLastPage(!next);
 		setLoading(false);
@@ -107,6 +106,13 @@ export const StudentAll = () => {
 		},
 	];
 
+	let totalWidth = 0;
+	columns.forEach((column) => {
+		if (column.width) {
+			totalWidth += column.width;
+		}
+	});
+
 	const rows = students.map((student, index) => {
 		return {
 			id: index + 1,
@@ -122,14 +128,14 @@ export const StudentAll = () => {
 
 
 	return (
-		<Container>
+		<Container style={{flexDirection: 'column', width: totalWidth}}>
 			<h1 style={{paddingBottom: "20px", paddingTop: "60px"}}>
 				Student List
 			</h1>
 			{loading && <CircularProgress />}
 			{!loading && students.length === 0 && <p>No students found</p>}
 			{!loading && (
-				<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
+				<Box sx={{paddingBottom: "10px"}}>
 					<IconButton component={Link} sx={{ mr: 3 }} to={`/student/add/`}>
 						<Tooltip title="Add a new student" arrow>
 							<AddIcon sx={{color: "green"}} />
@@ -148,14 +154,13 @@ export const StudentAll = () => {
 						columns={columns}
 						rows={rows}
 						autoHeight
+						hideFooter={true}
 					/>
 					<Paginator
 						rowsPerPage={pageSize}
 						totalRows={totalRows}
 						currentPage={page}
 						setPage={setCurrentPage}
-						goToNextPage={goToNextPage}
-						goToPrevPage={goToPrevPage}
 					/>
 				</Container>
 			)}

@@ -79,8 +79,9 @@ export const CourseAdd = () => {
 		event.preventDefault();
         try {
             console.log(course);
-            await axios.post(`${BACKEND_API_URL}course/`, course);
-            navigate('/course/');
+            const response = await axios.post(`${BACKEND_API_URL}course/`, course);
+            const cid = response.data.cid
+			navigate(`/course/${cid}/details`);
 		} catch (error) {
             alert("The introduced course could not be added.")
 			console.log(error);

@@ -44,9 +44,11 @@ export const GradeAll = () => {
 
     const fetchGrades = async () => {
         setLoading(true);
+		const start = new Date().getTime()
         const response = await fetch(
           `${BACKEND_API_URL}grade/?page=${page}&page_size=${pageSize}`
         );
+		console.log(`GET GRADES: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
         setGrades(results);
         setTotalRows(count);
@@ -54,9 +56,9 @@ export const GradeAll = () => {
         setLoading(false);
       };
     
-      useEffect(() => {
-        fetchGrades();
-      }, [page]);
+  useEffect(() => {
+	fetchGrades();
+  }, [page]);
 
 	if (!loading && grades.length === 0) {
 	  return <div>No grades</div>;
@@ -71,8 +73,20 @@ export const GradeAll = () => {
 				</Link>
 			),
 		},
-		{ field: "course", headerName: "Course", width: 200, align: 'center', headerAlign: 'center', },
-		{ field: "student", headerName: "Student", width: 250, align: 'center', headerAlign: 'center', },
+		{ field: "course", headerName: "Course", width: 200, align: 'center', headerAlign: 'center',
+			renderCell: (params) => (
+				<Link to={`/course/${grades[params.row.id-1].course}/details/`} title="View course details">
+					{params.value}
+				</Link>
+			),
+		},
+		{ field: "student", headerName: "Student", width: 250, align: 'center', headerAlign: 'center',
+			renderCell: (params) => (
+				<Link to={`/student/${grades[params.row.id-1].student}/details/`} title="View student details">
+					{params.value}
+				</Link>
+			),
+		},
 		{ field: "session", headerName: "Session", width: 100 , align: 'center', headerAlign: 'center', },
 		{ field: "retake", headerName: "Retake", width: 100, align: 'center', headerAlign: 'center',   },
 		{
@@ -102,7 +116,7 @@ export const GradeAll = () => {
 		return {
 		  id: index + 1,
 		  course: grade.course_name,
-		  student: grade.student_fname + " " + grade.student_lname,
+		  student: grade.student_name,
 		  session: grade.session,
 		  retake: grade.retake,
 		  gid: grade.gid, // add the gid field to use it in the operations renderer
@@ -111,14 +125,14 @@ export const GradeAll = () => {
 
 	
 	return (
-		<Container>
+		<Container style={{width:"850px"}}>
 			<h1 style={{paddingBottom: "20px", paddingTop: "60px"}}>
 				Grade List
 			</h1>
 			{loading && <CircularProgress />}
 			{!loading && grades.length === 0 && <p>No grades found</p>}
 			{!loading && (
-				<Box sx={{display: 'flex', justifyContent: 'flex-start', paddingBottom: "10px"}}>
+				<Box sx={{paddingBottom: "10px"}}>
 					<IconButton component={Link} sx={{ mr: 3 }} to={`/grade/add/`}>
 						<Tooltip title="Add a new grade" arrow>
 							<AddIcon sx={{color: "green"}} />
@@ -133,7 +147,7 @@ export const GradeAll = () => {
 			  </Box>
 			)}
 			{!loading && grades.length > 0 && (
-				<Container style={{display: 'flex', justifyContent: 'center',}}>
+				<Container style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>
 					<DataGrid
 					columns={columns}
 					rows={rows}
@@ -145,8 +159,6 @@ export const GradeAll = () => {
                         totalRows={totalRows}
                         currentPage={page}
                         setPage={setCurrentPage}
-                        goToNextPage={goToNextPage}
-                        goToPrevPage={goToPrevPage}
                     />
 				</Container>
 			)}

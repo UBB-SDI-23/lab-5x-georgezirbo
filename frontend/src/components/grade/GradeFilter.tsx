@@ -50,9 +50,11 @@ export const GradeFilter = () => {
 
     const fetchGrades = async () => {
         setLoading(true);
+        const start = new Date().getTime()
         const response = await fetch(
-          `${BACKEND_API_URL}grade/?final-gte=${MinFinal}/?page=${page}&page_size=${pageSize}`
+          `${BACKEND_API_URL}grade/?final-gte=${MinFinal}&page=${page}&page_size=${pageSize}`
         );
+        console.log(`GET GRADES FILTER: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
         setGrades(results);
         setTotalRows(count);
@@ -64,15 +66,19 @@ export const GradeFilter = () => {
         fetchGrades();
       }, [page]);
     
-    const handleFilterClick = () => {
+    const handleFilterClick = async() => {
         setLoading(true);
-        fetch(`${BACKEND_API_URL}grade/?final-gte=${MinFinal}`)
-          .then((res) => res.json())
-          .then((data) => {
-            setGrades(data);
-            setLoading(false);
-          });
-      };
+        const start = new Date().getTime()
+        const response = await fetch(
+            `${BACKEND_API_URL}grade/?final-gte=${MinFinal}`
+        );
+        console.log(`GET GRADES FILTER: ${(new Date().getTime() - start)/1000} seconds`)
+        const { count, next, previous, results } = await response.json();
+        setGrades(results);
+        setTotalRows(count);
+        setIsLastPage(!next);
+        setLoading(false);
+    };
   
   
 	const columns: GridColDef[] = [
@@ -94,7 +100,7 @@ export const GradeFilter = () => {
 		return {
 		  id: index + 1,
 		  course: grade.course_name,
-		  student: grade.student_fname + " " + grade.student_lname,
+		  student: grade.student_name,
 		  session: grade.session,
 		  retake: grade.retake,
 		  gid: grade.gid, // add the gid field to use it in the operations renderer
@@ -103,14 +109,14 @@ export const GradeFilter = () => {
 
 	
 	return (
-		<Container>
-			<h1 style={{paddingBottom: "40px", paddingTop: "60px"}}>
+		<Container style={{width:"700px"}}>
+			<h1 style={{paddingBottom: "20px", paddingTop: "60px"}}>
 				Filter Grade List
 			</h1>
 			{loading && <CircularProgress />}
-			{!loading && grades.length === 0 && <p>No grades</p>}
+			{!loading && grades.length === 0 && <p style={{marginBottom: "50px"}}>No grades</p>}
             {!loading && (
-                <Box display="flex" alignItems="left" justifyContent="left" mb={3}>
+                <Box sx={{display: 'flex', justifyContent: 'flex-start', paddingBottom: "10px"}}>
                     <IconButton component={Link} sx={{ mr: 25 }} to={`/grade/`}>
                         <ArrowBackIcon />
                     </IconButton>{" "}
@@ -122,9 +128,9 @@ export const GradeFilter = () => {
                         onChange={(e) => setMinFinal(parseFloat(e.target.value))}
                         type="number"
                         inputProps={{ min: 0, max: 10 }}
-                        sx={{ width: 150 }}
+                        sx={{ width: 100, mr: 2 }}
                     />
-                    <Button variant="contained" startIcon={<FilterAltIcon/>} onClick={handleFilterClick} disabled={!MinFinal}>
+                    <Button variant="contained" sx={{width: 100}} startIcon={<FilterAltIcon/>} onClick={handleFilterClick} disabled={!MinFinal}>
                         Filter
                     </Button>
               </Box>
@@ -138,13 +144,11 @@ export const GradeFilter = () => {
 					hideFooter={true}
 					/>
 					<Paginator
-            rowsPerPage={pageSize}
-            totalRows={totalRows}
-            currentPage={page}
-            setPage={setCurrentPage}
-            goToNextPage={goToNextPage}
-            goToPrevPage={goToPrevPage}
-        />
+                        rowsPerPage={pageSize}
+                        totalRows={totalRows}
+                        currentPage={page}
+                        setPage={setCurrentPage}
+                    />
 				</Container>
 			)}
 		</Container>

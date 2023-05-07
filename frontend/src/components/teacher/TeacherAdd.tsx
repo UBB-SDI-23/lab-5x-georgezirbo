@@ -23,7 +23,8 @@ export const TeacherAdd = () => {
     const [teacher, setTeacher] = useState<Teacher>({
         fname: "",
         lname: "",
-        rank: "P"
+        rank: "P",
+		descr: ""
 	});
 
 	const getKey: {[key: string]: string} = {
@@ -42,10 +43,10 @@ export const TeacherAdd = () => {
 		event.preventDefault();
         try {
             console.log(teacher);
-            await axios.post(`${BACKEND_API_URL}teacher/`, teacher);
-            navigate('/teacher/');
+            const response = await axios.post(`${BACKEND_API_URL}teacher/`, teacher);
+            const tid = response.data.tid;
+			navigate(`/teacher/${tid}/details`);
 		} catch (error) {
-			console.log(teacher)
             alert("The introduced teacher could not be added.")
 			console.log(error);
 		}
@@ -100,7 +101,14 @@ export const TeacherAdd = () => {
 							<MenuItem value="Lecturer" onClick={() => teacher.rank = 'L'}>Lecturer</MenuItem>
 							<MenuItem value="Associate" onClick={() => teacher.rank = 'A'}>Associate</MenuItem>
 						</TextField>
-
+						<TextField
+							id="descr"
+							label="Description"
+							variant="outlined"
+							fullWidth
+							sx={{ mb: 2 }}
+							onChange={(event) => setTeacher({ ...teacher, descr: event.target.value })}
+						/>
 						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Add Teacher</Button>
 					</form>
 				</CardContent>

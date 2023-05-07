@@ -7,7 +7,6 @@ export interface Grade {
     retake: number;
     course?: number;
     course_name?: string;
-    student_fname?: string;
-    student_lname?: string;
+    student_name?: string;
     student?: number;
 }

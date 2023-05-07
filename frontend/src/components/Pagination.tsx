@@ -1,7 +1,6 @@
 import { debounce } from "lodash";
 import { useCallback, useEffect } from "react";
-import { Box, IconButton, TextField, Typography, Container } from '@mui/material';
-import { ArrowForward, ArrowBack } from '@mui/icons-material'
+import { Box, IconButton } from '@mui/material';
 import { useState } from "react";
 
 interface PaginatorProps {
@@ -9,11 +8,9 @@ interface PaginatorProps {
     totalRows: number;
     currentPage: number;
     setPage: (page: number) => void;
-    goToNextPage: () => void;
-    goToPrevPage: () => void;
 }
 
-export const Paginator = ({ rowsPerPage, totalRows, currentPage,  setPage, goToNextPage, goToPrevPage }: PaginatorProps) => {
+export const Paginator = ({ rowsPerPage, totalRows, currentPage,  setPage}: PaginatorProps) => {
 
     const totalPages = Math.ceil(totalRows / rowsPerPage);
 
@@ -22,14 +19,52 @@ export const Paginator = ({ rowsPerPage, totalRows, currentPage,  setPage, goToN
             setPage(1);
             return;
         }
-
         else if (pageNumber > totalPages) {
             setPage(totalPages);
             return;
         }
-
         setPage(pageNumber);
     }
+    const [buttons, setButtons] = useState<(string | number)[]>([]);
+    const [activeIndex, setActiveIndex] = useState<number>(currentPage);
+
+    function generateButtons(current: number, end: number): void {
+        const pages = [];
+        if (current <= 8) {
+            for (let i = 1; i < current + 6; i++) {
+                pages.push(i);
+            }
+            pages.push('...');
+            for (let i = end - 4; i <= end; i++) {
+                pages.push(i);
+            }
+        } else if (end - 11 <= current) {
+            for (let i = 1; i < 6; i++) {
+                pages.push(i);
+            }
+            pages.push('...');
+            for (let i = current - 5; i <= end; i++) {
+                pages.push(i);
+            }
+        } else {
+            for (let i = 1; i < 6; i++) {
+                pages.push(i);
+            }
+            pages.push('...');
+            for (let i = current - 5; i < current + 6; i++) {
+                pages.push(i);
+            }
+            pages.push('...');
+            for (let i = end - 4; i <= end; i++) {
+                pages.push(i);
+            }
+        }
+        setButtons(pages);
+    }
+
+    useEffect(() => {
+        generateButtons(currentPage, totalPages);
+    }, [currentPage, totalPages]);
 
     const debounceOnChange = useCallback(debounce(changeCurrentPage, 500), []);
 
@@ -38,49 +73,28 @@ export const Paginator = ({ rowsPerPage, totalRows, currentPage,  setPage, goToN
             debounceOnChange.cancel();
         };
     }, [debounceOnChange])
-    const [buttons, setButtons] = useState<(string | "...")[]>([]);
 
-    const generateButtons = (position: number ) => {
-        const buttons: string[] = [];
-        for (let i = 1; i <= 5; i++) {
-          buttons.push(`<button>${i}</button>`);
-        }
-        setButtons(buttons);
-      }
 
     return (
-
-        <Box display="flex" alignItems="center">
-            <IconButton
-                color="primary"
-                disabled={currentPage === 1}
-                onClick={goToPrevPage}
-                style={{ marginRight: '10px' }}
-            >
-                <ArrowBack />
-            </IconButton>
-
-            <TextField
-                variant="outlined"
-                size="small"
-                type="number"
-                value={currentPage}
-                onChange={(event) => debounceOnChange(Number(event.target.value))}
-                style={{ margin: '10px', width: '100px'}}
-                inputProps={{ style: { textAlign: 'center' } }}
-            />
-
-            <Typography style={{ marginRight: '10px' }}>
-                of {totalPages}
-            </Typography>
-
-            <IconButton
-                color="primary"
-                disabled={currentPage === totalPages}
-                onClick={goToNextPage}
-            >
-                <ArrowForward />
-            </IconButton>
+        <Box display="flex" justifyContent="center" sx={{mt: 3}}>
+            <p style={{marginRight: "20px"}}>See page:</p>
+            {buttons.map((button, index) => (
+                <IconButton
+                    key={index}
+                    onClick={() => { setActiveIndex(button as number); changeCurrentPage(button as number)}}
+                    disabled={button === '...'}
+                    sx={{
+                        fontSize: 16,
+                        borderRadius: 1,
+                        fontWeight: activeIndex === button ? 'bold' : 'normal',
+                        textDecoration: activeIndex === button ? 'underline' : 'none',
+                        color: 'blue'
+                    }}
+                >
+                    {button}
+                </IconButton>
+            ))}
+            <p style={{marginLeft: "20px"}}>  ({totalRows} results)</p>
         </Box>
 
     )

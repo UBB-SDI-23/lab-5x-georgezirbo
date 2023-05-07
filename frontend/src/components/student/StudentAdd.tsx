@@ -46,8 +46,9 @@ export const StudentAdd = () => {
 		event.preventDefault();
         try {
             console.log(student);
-            await axios.post(`${BACKEND_API_URL}student/`, student);
-            navigate('/student/');
+            const response = await axios.post(`${BACKEND_API_URL}student/`, student);
+			const sid = response.data.sid;
+            navigate(`/student/${sid}/details`);
         } catch (error) {
             alert("The introduced student could not be added.")
 			console.log(error);
