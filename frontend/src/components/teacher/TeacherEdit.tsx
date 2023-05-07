@@ -122,6 +122,7 @@ export const TeacherEdit = () => {
                             id="descr"
                             label="Description"
                             variant="outlined"
+			    fullWidth
                             value={teacher.descr}
                             sx={{ mb: 2}}
                             onChange={(event) => setTeacher({ ...teacher, descr: event.target.value })}
