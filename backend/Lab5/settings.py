@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     # YOUR SETTINGS
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    #'DEFAULT_PAGINATION_CLASS': 'api.pagination.CustomPagination',
 }
 
 SPECTACULAR_SETTINGS = {
@@ -113,6 +114,17 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'mpp-local',
+#         'USER': 'postgres',
+#         'PASSWORD': 'password',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5432',
+#     }
+# }
 
 
 # Password validation

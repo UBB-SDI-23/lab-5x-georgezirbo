@@ -1,91 +1,73 @@
 from django.db.models import fields
 from rest_framework import serializers
+
+
 from .models import *
 
 
-class GradeSerializerList(serializers.ModelSerializer):
+class DynamicFieldsModelSerializer(serializers.ModelSerializer):
+    """
+    A ModelSerializer that takes an additional `fields` argument that
+    controls which fields should be displayed.
+    """
 
-    class Meta:
-        model = Grade
-        fields = '__all__'
+    def __init__(self, *args, **kwargs):
+        kwargs.pop('fields', None)
+        include_fields = kwargs.pop('include_fields', None)
+        exclude_fields = kwargs.pop('exclude_fields', None)
 
+        # Instantiate the superclass normally
+        super().__init__(*args, **kwargs)
 
+        if include_fields is not None:
+            for field in include_fields:
+                self.fields.__setitem__(field, self.fields[field])
+        if exclude_fields is not None:
+            for field in exclude_fields:
+                split = field.split('__')
+                to_access = self.fields
+                for i in range(len(split)-1):
+                    to_access = to_access.get(split[i])
+                if isinstance(to_access, serializers.ListSerializer):
+                    to_access = to_access.child
+                to_access.fields.pop(split[-1])
 
-class GradeSerializerDetailsPartial(serializers.ModelSerializer):
+class NameSerializerField(serializers.Field):
+    def to_representation(self, value):
+        return f"{value.fname} {value.lname}"
+
+class GradeSerializer(DynamicFieldsModelSerializer):
     course_name = serializers.CharField(source='course.name', read_only=True)
-    student_fname = serializers.CharField(source='student.fname', read_only=True)
-    student_lname = serializers.CharField(source='student.lname', read_only=True)
+    student_name = NameSerializerField(source='student', read_only=True)
 
     class Meta:
         model = Grade
-        fields = ('gid', 'course', 'course_name', 'student', 'student_fname', 'student_lname','session', 'retake')
+        fields = ('gid', 'course', 'course_name', 'student', 'student_name', 'session', 'retake')
 
-class StudentSerializerList(serializers.ModelSerializer):
-    no_courses = serializers.IntegerField(read_only=True, required=False)
-    class Meta:
-        model = Student
-        fields = ('sid', 'fname', 'lname', 'cnp', 'email', 'phone', 'no_courses')
-
-
-class StudentSerializerDetails(serializers.ModelSerializer):
-    grades = GradeSerializerDetailsPartial(source='student_grades', read_only=True, required=False, many=True)
+class StudentSerializer(DynamicFieldsModelSerializer):
+    avg_grade = serializers.FloatField(read_only=True)
+    no_courses = serializers.IntegerField(read_only=True)
+    grades = GradeSerializer(source='student_grades', exclude_fields=['student', 'student_name'], read_only=True, required=False, many=True)
 
     class Meta:
         model = Student
-        fields = ('sid', 'fname', 'lname', 'cnp', 'email', 'phone', 'grades')
-        depth = 1
+        fields = ('sid', 'fname', 'lname', 'cnp', 'email', 'phone', 'avg_grade','grades', 'courses', 'no_courses')
 
-class CourseSerializerList(serializers.ModelSerializer):
-    teacher_fname = serializers.CharField(source='teacher.fname',read_only=True, required=False)
-    teacher_lname = serializers.CharField(source='teacher.lname',read_only=True, required=False)
+
+class CourseSerializer(DynamicFieldsModelSerializer):
+    teacher_name = NameSerializerField(source='teacher',read_only=True, required=False)
     no_students = serializers.IntegerField(read_only=True, required=False)
-    class Meta:
-        model = Course
-        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher','teacher_fname', 'teacher_lname', 'year', 'no_students')
-
-class CourseSerializerListSimple(serializers.ModelSerializer):
-    class Meta:
-        model = Course
-        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher', 'year')
-
-class CourseSerializerDetails(serializers.ModelSerializer):
-    grades = GradeSerializerDetailsPartial(source='course_grades', read_only=True, required=False, many=True)
+    grades = GradeSerializer(source='course_grades', exclude_fields=['course_name', 'course', 'student'], read_only=True, required=False, many=True)
 
     class Meta:
         model = Course
-        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher', 'year', 'grades')
-        #depth=1
+        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher', 'teacher_name', 'year', 'no_students', 'grades')
 
-
-class GradeSerializerDetails(serializers.ModelSerializer):
-    student_fname = serializers.CharField(source='student.fname',read_only=True, required=False)
-    student_lname = serializers.CharField(source='student.lname',read_only=True, required=False)
-    course_name = serializers.CharField(source='course.name',read_only=True, required=False)
-    class Meta:
-        model = Grade
-        fields = ('gid', 'course', 'course_name', 'student', 'student_fname', 'student_lname', 'session', 'retake')
-
-class TeacherSerializerList(serializers.ModelSerializer):
+class TeacherSerializer(DynamicFieldsModelSerializer):
     no_courses = serializers.IntegerField(read_only=True, required=False)
+    courses = CourseSerializer(source='teacher_courses', exclude_fields=['teacher', 'teacher_name', 'no_students', 'grades'], read_only=True, required=False, many=True)
     class Meta:
         model = Teacher
-        fields = ('tid', 'fname', 'lname', 'rank', 'no_courses')
+        fields = ('tid', 'fname', 'lname', 'rank', 'no_courses', 'courses', 'descr')
 
-class TeacherSerializerDetails(serializers.ModelSerializer):
-    courses = CourseSerializerListSimple(source='teacher_courses', read_only=True, required=False, many=True)
-    class Meta:
-        model = Teacher
-        fields = ('fname', 'lname', 'rank', 'courses')
-
-class StudentAverageSerializer(serializers.ModelSerializer):
-    avg_grade = serializers.FloatField()
-    class Meta:
-        model = Student
-        fields = ('sid', 'fname', 'lname', 'cnp', 'email', 'phone', 'avg_grade')
-
-class CourseNoStudentsSerializer(serializers.ModelSerializer):
-    no_students = serializers.IntegerField()
-    class Meta:
-        model = Course
-        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher', 'year', 'no_students')
 
