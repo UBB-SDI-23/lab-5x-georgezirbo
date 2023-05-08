@@ -1,9 +1,9 @@
 from django.db.models import fields
 from rest_framework import serializers
-
+from rest_framework_simplejwt.serializers import \
+    TokenObtainPairSerializer
 
 from .models import *
-
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """
@@ -42,7 +42,7 @@ class GradeSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Grade
-        fields = ('gid', 'course', 'course_name', 'student', 'student_name', 'session', 'retake')
+        fields = ('gid', 'course', 'course_name', 'student', 'student_name', 'session', 'retake', 'user')
 
 class StudentSerializer(DynamicFieldsModelSerializer):
     avg_grade = serializers.FloatField(read_only=True)
@@ -51,7 +51,7 @@ class StudentSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Student
-        fields = ('sid', 'fname', 'lname', 'cnp', 'email', 'phone', 'avg_grade','grades', 'courses', 'no_courses')
+        fields = ('sid', 'fname', 'lname', 'cnp', 'email', 'phone', 'avg_grade','grades', 'courses', 'no_courses', 'user')
 
 
 class CourseSerializer(DynamicFieldsModelSerializer):
@@ -61,13 +61,38 @@ class CourseSerializer(DynamicFieldsModelSerializer):
 
     class Meta:
         model = Course
-        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher', 'teacher_name', 'year', 'no_students', 'grades')
+        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher', 'teacher_name', 'year', 'no_students', 'grades', 'user')
 
 class TeacherSerializer(DynamicFieldsModelSerializer):
     no_courses = serializers.IntegerField(read_only=True, required=False)
     courses = CourseSerializer(source='teacher_courses', exclude_fields=['teacher', 'teacher_name', 'no_students', 'grades'], read_only=True, required=False, many=True)
     class Meta:
         model = Teacher
-        fields = ('tid', 'fname', 'lname', 'rank', 'no_courses', 'courses', 'descr')
+        fields = ('tid', 'fname', 'lname', 'rank', 'no_courses', 'courses', 'descr', 'user')
+
+class UserSerializer(DynamicFieldsModelSerializer):
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
+    class Meta:
+        model = User
+        fields = '__all__'
+
+class ProfileSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['username'] = user.username
+        token['is_superuser'] = user.is_superuser
+        token['is_staff'] = user.is_staff
+        token['is_active'] = user.is_active
+        return token
 
 
