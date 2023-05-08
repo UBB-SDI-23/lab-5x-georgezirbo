@@ -124,6 +124,7 @@ export const TeacherEdit = () => {
                             variant="outlined"
 			    fullWidth
                             value={teacher.descr}
+                            fullWidth
                             sx={{ mb: 2}}
                             onChange={(event) => setTeacher({ ...teacher, descr: event.target.value })}
                         />
