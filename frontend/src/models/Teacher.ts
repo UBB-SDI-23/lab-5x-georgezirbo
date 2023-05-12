@@ -8,4 +8,7 @@ export interface Teacher {
     descr: string;
     courses?: Course[];
     no_courses?: number;
+    user?: number;
+    username?: string;
+
 }

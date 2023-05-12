@@ -34,7 +34,8 @@ from .views.Token import \
     MyTokenObtainPairView
 from .views.User import \
     UserView, \
-    UserDetailView
+    UserDetailView, \
+    GenerateUsers
 
 urlpatterns=[
     path('student/', StudentView.as_view()),
@@ -58,6 +59,7 @@ urlpatterns=[
     path('register/confirm/', RegisterConfirmationView.as_view()),
     path('token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('generate/', GenerateUsers.as_view(), name='token_obtain_pair'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('schema/', SpectacularAPIView.as_view(), name='schema'),
     path('schema/docs/', SpectacularSwaggerView().as_view(url_name='schema'))
