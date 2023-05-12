@@ -85,7 +85,13 @@ export const CourseAll = () => {
 			),
 		},
 		{ field: "students", headerName: "# of students", width: 100, align: 'center', headerAlign: 'center', },
-		{
+		{ field: "username", headerName: "Username", width: 150, align: 'center', headerAlign: 'center',
+			renderCell: (params) => (
+				<Link to={`/profile/${params.row.username}/`} title="View user profile">
+					{params.value}
+				</Link>
+			),
+		},		{
 		  field: "operations",
 		  headerName: "Operations",
 		  width: 150,
@@ -119,6 +125,8 @@ export const CourseAll = () => {
 		  year: course.year,
 		  teacher: course?.teacher_name,
 		  students: course.no_students,
+		  username: course.username,
+		  user: course.user,
 		  cid: course.cid, // add the cid field to use it in the operations renderer
 		};
 	  }); 

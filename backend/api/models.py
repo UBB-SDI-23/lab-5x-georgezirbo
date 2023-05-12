@@ -1,3 +1,6 @@
+from django.contrib.auth.models import \
+    AbstractUser, \
+    Group
 from django.db import models
 from django.core.validators import *
 from django.db.models import \
@@ -7,6 +10,34 @@ from django.db.models.functions import \
     Greatest
 
 
+def validate_choices(value):
+    if value not in ['M', 'F']:
+        raise ValidationError("Gender must be either 'M' or 'F'.")
+
+class User(AbstractUser):
+    date_joined = models.DateTimeField(auto_now_add=True, null=True)
+    first_name = models.CharField(max_length=150, blank=True, default='')
+    last_name = models.CharField(max_length=150, blank=True, default='')
+    email = models.EmailField(blank=True, default='')
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=False)
+    groups = models.ManyToManyField(Group, related_name='user_groups', blank=True)
+    user_permissions = models.ManyToManyField('auth.Permission', related_name='user_permissions', blank=True)
+    is_superuser = models.BooleanField(default=False)
+    last_login = models.DateTimeField(null=True, blank=True, default=None)
+
+
+class Profile(models.Model):
+    pid = models.AutoField(primary_key=True)
+    fname = models.CharField(max_length=100, verbose_name="First Name", default='', blank=True, validators=[RegexValidator(r'^[a-zA-Z]+$')])
+    lname = models.CharField(max_length=100, verbose_name="Last Name", default='', blank=True, validators=[RegexValidator(r'^[a-zA-Z]+$')])
+    bio = models.TextField(verbose_name="Bio", blank=True, default='', null=True)
+    gender = models.CharField(max_length=1, null=True,verbose_name="Gender", choices=[('M', 'Male'), ('F', 'Female')], validators=[validate_choices])
+    age = models.IntegerField(null=True, validators=[MinValueValidator(1)])
+    user = models.OneToOneField(User, on_delete=models.CASCADE, db_column='user_id', related_name='profile_users')
+    confirmation_code = models.CharField(max_length=12, blank=True, null=True)
+    confirmation_expiry_date = models.DateTimeField(null=True, blank=True)
+
 class Student(models.Model):
     sid = models.AutoField(primary_key=True)
     fname = models.CharField(max_length=100, verbose_name='First Name')
@@ -15,11 +46,12 @@ class Student(models.Model):
     email = models.CharField(max_length=100, validators=[RegexValidator(r'[a-z]{2,10}\.[a-z]{2,10}@stud\.com', message='Please introduce a valid email')], blank=True, null=True, verbose_name='Email')
     phone = models.CharField(max_length=10, validators=[RegexValidator(r'07\d{8}', message='Please introduce a valid phone number')], blank=True, null=True, verbose_name='Phone')
     courses = models.ManyToManyField('Course', through='Grade', related_name='courses')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='student_users', null=True)
 
     class Meta:
         ordering=['sid']
-        indexes=[models.Index(fields=['fname', 'lname']),]
-                #models.Index(fields=['avg_grade'])]
+        indexes=[ models.Index(fields=['fname', 'lname']) ]
+
 
     def __str__(self):
         return f"[{self.fname} {self.lname}]: {self.cnp}; {self.email}; {self.phone}"
@@ -30,6 +62,7 @@ class Grade(models.Model):
     student = models.ForeignKey('Student', on_delete=models.CASCADE, verbose_name='Student', related_name='student_grades', db_column='student')
     session = models.FloatField(verbose_name='Session Grade', validators=[MinValueValidator(1), MaxValueValidator(10)])
     retake = models.FloatField(verbose_name='Retake Grade', validators=[MinValueValidator(1), MaxValueValidator(10)], blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='grade_users', null=True)
 
     class Meta:
         ordering=['gid']
@@ -49,6 +82,7 @@ class Course(models.Model):
     teacher = models.ForeignKey('Teacher', on_delete=models.CASCADE, verbose_name='Teacher', related_name='teacher_courses', db_column='teacher')
     year = models.PositiveIntegerField(default=2023, validators=[MinValueValidator(2000), MaxValueValidator(2023)], verbose_name='Year')
     students = models.ManyToManyField('Student', through='Grade', related_name='students')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='course_users', null=True)
 
     def __str__(self):
         return f"\"{self.name}\" @ {self.university} - {self.faculty} {self.year}"
@@ -63,6 +97,7 @@ class Teacher(models.Model):
     lname = models.CharField(max_length=100, verbose_name="Last Name")
     rank = models.CharField(max_length=1, verbose_name="Rank", choices=[('P', 'Professor'), ('A', 'Associate'), ('L', 'Lecturer')])
     descr = models.TextField(verbose_name="Description", null=False, blank=True, default='')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='teacher_users', null=True)
 
     def __str__(self):
         return f"{self.fname} {self.lname} [{self.rank}]"
@@ -70,4 +105,8 @@ class Teacher(models.Model):
     class Meta:
         ordering=['tid']
         indexes=[models.Index(fields=['fname', 'lname'])]
+
+
+
+
 

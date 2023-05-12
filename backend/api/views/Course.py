@@ -46,6 +46,7 @@ class CourseView(generics.GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CourseDetailView(generics.GenericAPIView):
+
     serializer_class = CourseSerializer
 
     def get(self, request, pk, *args, **kwargs):

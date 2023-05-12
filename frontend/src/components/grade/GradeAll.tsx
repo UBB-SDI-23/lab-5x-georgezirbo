@@ -89,6 +89,13 @@ export const GradeAll = () => {
 		},
 		{ field: "session", headerName: "Session", width: 100 , align: 'center', headerAlign: 'center', },
 		{ field: "retake", headerName: "Retake", width: 100, align: 'center', headerAlign: 'center',   },
+		{ field: "username", headerName: "Username", width: 150, align: 'center', headerAlign: 'center',
+			renderCell: (params) => (
+				<Link to={`/profile/${params.row.username}/`} title="View user profile">
+					{params.value}
+				</Link>
+			),
+		},
 		{
 		  field: "operations",
 		  headerName: "Operations",
@@ -119,6 +126,8 @@ export const GradeAll = () => {
 		  student: grade.student_name,
 		  session: grade.session,
 		  retake: grade.retake,
+		username: grade.username,
+		user: grade.user,
 		  gid: grade.gid, // add the gid field to use it in the operations renderer
 		};
 	  }); 

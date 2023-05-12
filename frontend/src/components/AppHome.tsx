@@ -6,9 +6,9 @@ export const AppHome = () => {
 	return (
         <React.Fragment>
             <Container maxWidth="sm">
-                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-                    <img src="../../img.png" alt="Example Image" style={{ width: '100%'}}/>
-                </Box>
+                <h1>
+                    Welcome to my school app!
+                </h1>
             </Container>
 		</React.Fragment>
 	);

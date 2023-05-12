@@ -1,9 +1,9 @@
 from django.db.models import fields
 from rest_framework import serializers
-
+from rest_framework_simplejwt.serializers import \
+    TokenObtainPairSerializer
 
 from .models import *
-
 
 class DynamicFieldsModelSerializer(serializers.ModelSerializer):
     """
@@ -37,37 +37,63 @@ class NameSerializerField(serializers.Field):
         return f"{value.fname} {value.lname}"
 
 class GradeSerializer(DynamicFieldsModelSerializer):
+    username = serializers.CharField(max_length=50, read_only=True, source='user.username')
     course_name = serializers.CharField(source='course.name', read_only=True)
     student_name = NameSerializerField(source='student', read_only=True)
 
     class Meta:
         model = Grade
-        fields = ('gid', 'course', 'course_name', 'student', 'student_name', 'session', 'retake')
+        fields = ('gid', 'course', 'course_name', 'student', 'student_name', 'session', 'retake', 'user', 'username')
 
 class StudentSerializer(DynamicFieldsModelSerializer):
+    username = serializers.CharField(max_length=50, read_only=True, source='user.username')
     avg_grade = serializers.FloatField(read_only=True)
     no_courses = serializers.IntegerField(read_only=True)
     grades = GradeSerializer(source='student_grades', exclude_fields=['student', 'student_name'], read_only=True, required=False, many=True)
 
     class Meta:
         model = Student
-        fields = ('sid', 'fname', 'lname', 'cnp', 'email', 'phone', 'avg_grade','grades', 'courses', 'no_courses')
+        fields = ('sid', 'fname', 'lname', 'cnp', 'email', 'phone', 'avg_grade','grades', 'courses', 'no_courses', 'user', 'username')
 
 
 class CourseSerializer(DynamicFieldsModelSerializer):
+    username = serializers.CharField(max_length=50, read_only=True, source='user.username')
     teacher_name = NameSerializerField(source='teacher',read_only=True, required=False)
     no_students = serializers.IntegerField(read_only=True, required=False)
     grades = GradeSerializer(source='course_grades', exclude_fields=['course_name', 'course', 'student'], read_only=True, required=False, many=True)
 
     class Meta:
         model = Course
-        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher', 'teacher_name', 'year', 'no_students', 'grades')
+        fields = ('cid', 'name', 'university', 'faculty', 'department', 'teacher', 'teacher_name', 'year', 'no_students', 'grades', 'user', 'username')
 
 class TeacherSerializer(DynamicFieldsModelSerializer):
+    username = serializers.CharField(max_length=50, read_only=True, source='user.username')
     no_courses = serializers.IntegerField(read_only=True, required=False)
     courses = CourseSerializer(source='teacher_courses', exclude_fields=['teacher', 'teacher_name', 'no_students', 'grades'], read_only=True, required=False, many=True)
     class Meta:
         model = Teacher
-        fields = ('tid', 'fname', 'lname', 'rank', 'no_courses', 'courses', 'descr')
+        fields = ('tid', 'fname', 'lname', 'rank', 'no_courses', 'courses', 'descr', 'user', 'username')
+
+class UserSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+class ProfileSerializer(DynamicFieldsModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token['username'] = user.username
+        token['is_superuser'] = user.is_superuser
+        token['is_staff'] = user.is_staff
+        token['is_active'] = user.is_active
+        return token
 
 

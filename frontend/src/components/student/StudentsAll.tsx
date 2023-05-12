@@ -83,6 +83,13 @@ export const StudentAll = () => {
 		{ field: "email", headerName: "Email", width: 250, align: 'center', headerAlign: 'center', },
 		{ field: "phone", headerName: "Phone", width: 150, align: 'center', headerAlign: 'center', },
 		{ field: "courses", headerName: "# of courses", width: 100, align: 'center', headerAlign: 'center', },
+		{ field: "username", headerName: "Username", width: 150, align: 'center', headerAlign: 'center',
+			renderCell: (params) => (
+				<Link to={`/profile/${params.row.username}/`} title="View user profile">
+					{params.value}
+				</Link>
+			),
+		},
 		{
 			field: "operations",
 			headerName: "Operations",
@@ -122,6 +129,8 @@ export const StudentAll = () => {
 			email: student.email,
 			phone: student.phone,
 			courses: student.no_courses,
+			username: student.username,
+			user: student.user,
 			sid: student.sid, // add the sid field to use it in the operations renderer
 		};
 	});

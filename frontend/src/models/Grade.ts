@@ -9,4 +9,7 @@ export interface Grade {
     course_name?: string;
     student_name?: string;
     student?: number;
+    user?: number;
+    username?: string;
+
 }

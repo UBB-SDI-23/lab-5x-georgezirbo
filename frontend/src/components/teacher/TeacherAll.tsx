@@ -89,6 +89,13 @@ export const TeacherAll = () => {
 		{ field: "rank", headerName: "Rank", width: 120, align: 'center', headerAlign: 'center' },	
 		{ field: "courses", headerName: "# of courses", width: 100, align: 'center', headerAlign: 'center', },
 		{ field: "descr", headerName: "Description", width: 200, align: 'center', headerAlign: 'center', },
+		{ field: "username", headerName: "Username", width: 150, align: 'center', headerAlign: 'center',
+			renderCell: (params) => (
+				<Link to={`/profile/${params.row.username}/`} title="View user profile">
+					{params.value}
+				</Link>
+			),
+		},
 		{
 			field: "operations",
 			headerName: "Operations",
@@ -127,6 +134,8 @@ export const TeacherAll = () => {
 		  rank: getValue[teacher.rank],
 		  descr: teacher.descr,
 		  courses: teacher.no_courses,
+			username: teacher.username,
+			user: teacher.user,
 		  tid: teacher.tid, // add the tid field to use it in the operations renderer
 		};
 	  });

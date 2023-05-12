@@ -26,8 +26,11 @@ import { TeacherAll } from './components/teacher/TeacherAll'
 import { TeacherAdd } from './components/teacher/TeacherAdd' 
 import { TeacherEdit } from './components/teacher/TeacherEdit' 
 import { TeacherDetails } from './components/teacher/TeacherDetails' 
-import { TeacherRemove } from './components/teacher/TeacherRemove' 
+import { TeacherRemove } from './components/teacher/TeacherRemove'
+import { Login } from './components/auth/Login'
 import { NavMenu } from './components/NavMenu'
+import {ProfileDetails} from "./components/user/ProfileDetails";
+import {Register} from "./components/auth/Register";
 
 function App() {
 
@@ -61,6 +64,9 @@ function App() {
         <Route path="grade/:gradeID/details/" element={<GradeDetails />} />
         <Route path="grade/:gradeID/remove/" element={<GradeRemove />} />
         <Route path="grade/filter/" element={<GradeFilter />} />
+        <Route path="profile/:username/" element={<ProfileDetails />} />
+        <Route path="login/" element={<Login />} />
+        <Route path="register/" element={<Register />} />
       </Routes> 
     </BrowserRouter>
   );
