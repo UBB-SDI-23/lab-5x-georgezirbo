@@ -1,0 +1,180 @@
+Index: ../frontend/src/components/course/CourseAll.tsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import { useEffect, useState } from \"react\";\nimport { Course } from \"../../models/Course\";\nimport { DataGrid, GridColDef } from \"@mui/x-data-grid\";\nimport { CircularProgress, IconButton, Tooltip, Box} from \"@mui/material\";\nimport ReadMoreIcon from \"@mui/icons-material/ReadMore\";\nimport EditIcon from \"@mui/icons-material/Edit\";\nimport DeleteForeverIcon from \"@mui/icons-material/DeleteForever\";\nimport { Link } from \"react-router-dom\";\nimport { Container } from \"react-bootstrap\";\nimport AddIcon from \"@mui/icons-material/Add\";\nimport { BACKEND_API_URL } from \"../../../constants\";\nimport { BarChart } from \"@mui/icons-material\";\nimport {Paginator} from \"../Pagination\"\n\nexport const CourseAll = () => {\n\tconst [courses, setCourses] = useState<Course[]>([]);\n\tconst [loading, setLoading] = useState(false);\n\tconst [page, setPage] = useState(1);\n    const [pageSize, setPageSize] = useState(25);\n    const [totalRows, setTotalRows] = useState(0);\n    const crt = (page - 1) * pageSize + 1;\n    const [isLastPage, setIsLastPage] = useState(false);\n\n    const setCurrentPage = (newPage: number) => {\n        setPage(newPage);\n    }\n\n    const goToNextPage = () => {\n        if (isLastPage) {\n            return;\n        }\n\n        setPage(page + 1);\n    }\n\n    const goToPrevPage = () => {\n        if (page === 1) {\n            return;\n        }\n\n        setPage(page - 1);\n    }\n\n    const fetchCourses = async () => {\n        setLoading(true);\n\t\tconst start = new Date().getTime()\n        const response = await fetch(\n          `${BACKEND_API_URL}course/?page=${page}&page_size=${pageSize}`\n        );\n\t\tconsole.log(`GET COURSES: ${(new Date().getTime() - start)/1000} seconds`)\n        const { count, next, previous, results } = await response.json();\n        setCourses(results);\n        setTotalRows(count);\n        setIsLastPage(!next);\n        setLoading(false);\n      };\n    \n      useEffect(() => {\n        fetchCourses();\n      }, [page]);\n\n  \n\tif (!loading && courses.length === 0) {\n\t  return <div>No courses</div>;\n\t}\n  \n\tconst columns: GridColDef[] = [\n\t\t{ field: \"id\", headerName: \"#\", width: 20 },\n\t\t{ field: \"name\", headerName: \"Name\", width: 200,\n\t\t\trenderCell: (params) => (\n\t\t\t\t<Link to={`/course/${params.row.cid}/details/`} title=\"View course details\">\n\t\t\t\t\t{params.value}\n\t\t\t\t</Link>\n\t\t\t),\n\t\t},\n\t\t{ field: \"university\", headerName: \"University\", width: 250},\n\t\t{ field: \"faculty\", headerName: \"Faculty\", width: 250 },\n\t\t{ field: \"department\", headerName: \"Department\", width: 200,  },\n\t\t{ field: \"year\", headerName: \"Year\", width: 100, align: 'center', headerAlign: 'center', },\n\t\t{ field: \"teacher\", headerName: \"Teacher\", width: 200, align: 'center', headerAlign: 'center',\n\t\t\trenderCell: (params) => (\n\t\t\t\t<Link to={`/teacher/${courses[params.row.id-1]?.teacher}/details/`} title=\"View teacher details\">\n\t\t\t\t\t{params.value}\n\t\t\t\t</Link>\n\t\t\t),\n\t\t},\n\t\t{ field: \"students\", headerName: \"# of students\", width: 100, align: 'center', headerAlign: 'center', },\n\t\t{\n\t\t  field: \"operations\",\n\t\t  headerName: \"Operations\",\n\t\t  width: 150,\n\t\t  align: 'center', headerAlign: 'center',\n\t\t  renderCell: (params) => (\n\t\t\t<Container>\n\t\t\t\t<IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/course/${params.row.cid}/edit/`}>\n\t\t\t\t\t<Tooltip title=\"Edit course\" arrow>\n\t\t\t\t\t<EditIcon color=\"primary\" />\n\t\t\t\t\t</Tooltip>\n\t\t\t\t</IconButton>\n\t  \n\t\t\t\t<IconButton component={Link} sx={{ mr: 3 }} to={`/course/${params.row.cid}/remove/`}>\n\t\t\t\t\t<Tooltip title=\"Delete course\" arrow>\n\t\t\t\t\t<DeleteForeverIcon sx={{ color: \"red\" }} />\n\t\t\t\t\t</Tooltip>\n\t\t\t\t</IconButton>\n\t\t\t</Container>\n\t\t  ),\n\t\t},\n\t  ];\n\n\t  \n\t  const rows = courses.map((course, index) => {\n\t\treturn {\n\t\t  id: index + 1,\n\t\t  name: course.name,\n\t\t  university: course.university,\n\t\t  faculty: course.faculty,\n\t\t  department: course.department,\n\t\t  year: course.year,\n\t\t  teacher: course?.teacher_name,\n\t\t  students: course.no_students,\n\t\t  cid: course.cid, // add the cid field to use it in the operations renderer\n\t\t};\n\t  }); \n\n\t\n\treturn (\n\t\t<Container style={{flexDirection: 'column'}}>\n\t\t\t<h1 style={{paddingBottom: \"20px\", paddingTop: \"60px\"}}>\n\t\t\t\tCourse List\n\t\t\t</h1>\n\t\t\t{loading && <CircularProgress />}\n\t\t\t{!loading && courses.length === 0 && <p>No courses found</p>}\n\t\t\t{!loading && (\n\t\t\t\t<Box sx={{paddingBottom: \"10px\"}}>\n\t\t\t\t<IconButton component={Link} sx={{ mr: 3 }} to={`/course/add/`}>\n\t\t\t\t\t<Tooltip title=\"Add a new course\" arrow>\n\t\t\t\t\t\t<AddIcon sx={{color: \"green\"}} />\n\t\t\t\t\t</Tooltip>\n\t\t\t\t</IconButton>\n\t\t\t\t<IconButton component={Link} sx={{ mr: 3 }} to={`/course/by-no-students/`}>\n\t\t\t\t\t<Tooltip title=\"Sort By No Students\" arrow>\n\t\t\t\t\t\t<BarChart sx={{ color: \"purple\" }} />\n\t\t\t\t\t</Tooltip>\n\t\t\t\t</IconButton>\n\t\t\t</Box>\n\t\t\t)}\n\t\t\t{!loading && courses.length > 0 && (\n\t\t\t\t<Container style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>\n\t\t\t\t\t<DataGrid\n\t\t\t\t\tcolumns={columns}\n\t\t\t\t\trows={rows}\n\t\t\t\t\tautoHeight\n\t\t\t\t\thideFooter={true}\n\t\t\t\t\t/>\n\t\t\t\t\t<Paginator\n                        rowsPerPage={pageSize}\n                        totalRows={totalRows}\n                        currentPage={page}\n                        setPage={setCurrentPage}\n                    />\n\t\t\t\t</Container>\n\t\t\t)}\n\t\t</Container>\n\t  );\n\t  \n\t  \n  };
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../frontend/src/components/course/CourseAll.tsx b/../frontend/src/components/course/CourseAll.tsx
+--- a/../frontend/src/components/course/CourseAll.tsx	(revision 64269143c551c5eb4f72bdfdf962d00074f51f50)
++++ b/../frontend/src/components/course/CourseAll.tsx	(date 1683533287204)
+@@ -85,6 +85,7 @@
+ 			),
+ 		},
+ 		{ field: "students", headerName: "# of students", width: 100, align: 'center', headerAlign: 'center', },
++		{ field: "username", headerName: "Username", width: 100, align: 'center', headerAlign: 'center', },
+ 		{
+ 		  field: "operations",
+ 		  headerName: "Operations",
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"068c48b9-e7d0-4f85-83d5-d2b9ad7c6fa6\" name=\"Changes\" comment=\"views\" />\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"DjangoConsoleOptions\" custom-start-script=\"import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)\">\n    <option name=\"myCustomStartScript\" value=\"import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Python Script\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$/..\" />\n  </component>\n  <component name=\"MarkdownSettingsMigration\">\n    <option name=\"stateVersion\" value=\"1\" />\n  </component>\n  <component name=\"ProjectId\" id=\"2OiJSghJGkH6qcUVbjLTOdkbzo6\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\">{\n  &quot;keyToString&quot;: {\n    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\n    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,\n    &quot;last_opened_file_path&quot;: &quot;/Users/georgezirbo/Desktop/backend&quot;,\n    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,\n    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,\n    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,\n    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,\n    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;\n  }\n}</component>\n  <component name=\"RecentsManager\">\n    <key name=\"MoveFile.RECENT_KEYS\">\n      <recent name=\"$PROJECT_DIR$/api\" />\n    </key>\n  </component>\n  <component name=\"RunManager\" selected=\"Django Server.backend\">\n    <configuration name=\"main\" type=\"PythonConfigurationType\" factoryName=\"Python\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"backend\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"$USER_HOME$/Documents/UBB/Semester 4/Systems for Design and Implementation/Labs/SQLGenerator\" />\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <EXTENSION ID=\"PythonCoverageRunConfigurationExtension\" runner=\"coverage.py\" />\n      <option name=\"SCRIPT_NAME\" value=\"$USER_HOME$/Documents/UBB/Semester 4/Systems for Design and Implementation/Labs/SQLGenerator/main.py\" />\n      <option name=\"PARAMETERS\" value=\"\" />\n      <option name=\"SHOW_COMMAND_LINE\" value=\"false\" />\n      <option name=\"EMULATE_TERMINAL\" value=\"false\" />\n      <option name=\"MODULE_MODE\" value=\"false\" />\n      <option name=\"REDIRECT_INPUT\" value=\"false\" />\n      <option name=\"INPUT_FILE\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"backend\" type=\"Python.DjangoServer\" factoryName=\"Django server\">\n      <module name=\"backend\" />\n      <option name=\"INTERPRETER_OPTIONS\" value=\"\" />\n      <option name=\"PARENT_ENVS\" value=\"true\" />\n      <envs>\n        <env name=\"PYTHONUNBUFFERED\" value=\"1\" />\n        <env name=\"DJANGO_SETTINGS_MODULE\" value=\"Lab5.settings\" />\n      </envs>\n      <option name=\"SDK_HOME\" value=\"\" />\n      <option name=\"WORKING_DIRECTORY\" value=\"\" />\n      <option name=\"IS_MODULE_SDK\" value=\"false\" />\n      <option name=\"ADD_CONTENT_ROOTS\" value=\"true\" />\n      <option name=\"ADD_SOURCE_ROOTS\" value=\"true\" />\n      <option name=\"launchJavascriptDebuger\" value=\"false\" />\n      <option name=\"port\" value=\"8000\" />\n      <option name=\"host\" value=\"\" />\n      <option name=\"additionalOptions\" value=\"\" />\n      <option name=\"browserUrl\" value=\"\" />\n      <option name=\"runTestServer\" value=\"false\" />\n      <option name=\"runNoReload\" value=\"false\" />\n      <option name=\"useCustomRunCommand\" value=\"false\" />\n      <option name=\"customRunCommand\" value=\"\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Python.main\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TaskManager\">\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\n      <changelist id=\"068c48b9-e7d0-4f85-83d5-d2b9ad7c6fa6\" name=\"Changes\" comment=\"\" />\n      <created>1682037470660</created>\n      <option name=\"number\" value=\"Default\" />\n      <option name=\"presentableId\" value=\"Default\" />\n      <updated>1682037470660</updated>\n      <workItem from=\"1682037471725\" duration=\"205000\" />\n      <workItem from=\"1682037682978\" duration=\"140000\" />\n      <workItem from=\"1682040066194\" duration=\"2673000\" />\n      <workItem from=\"1682097513968\" duration=\"183000\" />\n      <workItem from=\"1682097728781\" duration=\"96000\" />\n      <workItem from=\"1682164763132\" duration=\"2663000\" />\n      <workItem from=\"1682171979593\" duration=\"2201000\" />\n      <workItem from=\"1682326111529\" duration=\"1930000\" />\n      <workItem from=\"1682984703100\" duration=\"4644000\" />\n      <workItem from=\"1683024566075\" duration=\"12392000\" />\n      <workItem from=\"1683323000936\" duration=\"50484000\" />\n      <workItem from=\"1683453506146\" duration=\"203000\" />\n    </task>\n    <task id=\"LOCAL-00001\" summary=\"viewa\">\n      <created>1682097671698</created>\n      <option name=\"number\" value=\"00001\" />\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\n      <option name=\"project\" value=\"LOCAL\" />\n      <updated>1682097671698</updated>\n    </task>\n    <option name=\"localTasksCounter\" value=\"2\" />\n    <servers />\n  </component>\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"UnknownFeatures\">\n    <option featureType=\"com.intellij.fileTypeFactory\" implementationName=\".env\" />\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"viewa\" />\n    <MESSAGE value=\"views\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"views\" />\n  </component>\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\n    <SUITE FILE_PATH=\"coverage/backend$main.coverage\" NAME=\"main Coverage Results\" MODIFIED=\"1683380105515\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"true\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$USER_HOME$/Documents/UBB/Semester 4/Systems for Design and Implementation/Labs/SQLGenerator\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 64269143c551c5eb4f72bdfdf962d00074f51f50)
++++ b/.idea/workspace.xml	(date 1683533121126)
+@@ -4,7 +4,7 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="068c48b9-e7d0-4f85-83d5-d2b9ad7c6fa6" name="Changes" comment="views" />
++    <list default="true" id="068c48b9-e7d0-4f85-83d5-d2b9ad7c6fa6" name="Changes" comment="Lab8 - backend [users models and views]" />
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -33,10 +33,11 @@
+   </component>
+   <component name="PropertiesComponent">{
+   &quot;keyToString&quot;: {
++    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;/Users/georgezirbo/Desktop/backend&quot;,
++    &quot;last_opened_file_path&quot;: &quot;/Users/georgezirbo/Documents/UBB/Semester 4/Systems for Design and Implementation/Labs/Lab5/backend&quot;,
+     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+@@ -46,11 +47,12 @@
+ }</component>
+   <component name="RecentsManager">
+     <key name="MoveFile.RECENT_KEYS">
++      <recent name="$PROJECT_DIR$" />
+       <recent name="$PROJECT_DIR$/api" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="Django Server.backend">
+-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++  <component name="RunManager" selected="Python.Register">
++    <configuration name="Register" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+       <module name="backend" />
+       <option name="INTERPRETER_OPTIONS" value="" />
+       <option name="PARENT_ENVS" value="true" />
+@@ -58,12 +60,34 @@
+         <env name="PYTHONUNBUFFERED" value="1" />
+       </envs>
+       <option name="SDK_HOME" value="" />
+-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Documents/UBB/Semester 4/Systems for Design and Implementation/Labs/SQLGenerator" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/api/views" />
++      <option name="IS_MODULE_SDK" value="true" />
++      <option name="ADD_CONTENT_ROOTS" value="true" />
++      <option name="ADD_SOURCE_ROOTS" value="true" />
++      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/api/views/Register.py" />
++      <option name="PARAMETERS" value="" />
++      <option name="SHOW_COMMAND_LINE" value="false" />
++      <option name="EMULATE_TERMINAL" value="false" />
++      <option name="MODULE_MODE" value="false" />
++      <option name="REDIRECT_INPUT" value="false" />
++      <option name="INPUT_FILE" value="" />
++      <method v="2" />
++    </configuration>
++    <configuration name="sql_scripts" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
++      <module name="backend" />
++      <option name="INTERPRETER_OPTIONS" value="" />
++      <option name="PARENT_ENVS" value="true" />
++      <envs>
++        <env name="PYTHONUNBUFFERED" value="1" />
++      </envs>
++      <option name="SDK_HOME" value="" />
++      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../SQLGenerator" />
+       <option name="IS_MODULE_SDK" value="false" />
+       <option name="ADD_CONTENT_ROOTS" value="true" />
+       <option name="ADD_SOURCE_ROOTS" value="true" />
+       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+-      <option name="SCRIPT_NAME" value="$USER_HOME$/Documents/UBB/Semester 4/Systems for Design and Implementation/Labs/SQLGenerator/main.py" />
++      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sql_scripts.py" />
+       <option name="PARAMETERS" value="" />
+       <option name="SHOW_COMMAND_LINE" value="false" />
+       <option name="EMULATE_TERMINAL" value="false" />
+@@ -98,7 +122,8 @@
+     </configuration>
+     <recent_temporary>
+       <list>
+-        <item itemvalue="Python.main" />
++        <item itemvalue="Python.Register" />
++        <item itemvalue="Python.sql_scripts" />
+       </list>
+     </recent_temporary>
+   </component>
+@@ -122,6 +147,8 @@
+       <workItem from="1683024566075" duration="12392000" />
+       <workItem from="1683323000936" duration="50484000" />
+       <workItem from="1683453506146" duration="203000" />
++      <workItem from="1683482065597" duration="17904000" />
++      <workItem from="1683519569977" duration="6843000" />
+     </task>
+     <task id="LOCAL-00001" summary="viewa">
+       <created>1682097671698</created>
+@@ -130,7 +157,14 @@
+       <option name="project" value="LOCAL" />
+       <updated>1682097671698</updated>
+     </task>
+-    <option name="localTasksCounter" value="2" />
++    <task id="LOCAL-00002" summary="Lab8 - backend [users models and views]">
++      <created>1683532820130</created>
++      <option name="number" value="00002" />
++      <option name="presentableId" value="LOCAL-00002" />
++      <option name="project" value="LOCAL" />
++      <updated>1683532820130</updated>
++    </task>
++    <option name="localTasksCounter" value="3" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -138,13 +172,39 @@
+   </component>
+   <component name="UnknownFeatures">
+     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
++  </component>
++  <component name="Vcs.Log.Tabs.Properties">
++    <option name="TAB_STATES">
++      <map>
++        <entry key="MAIN">
++          <value>
++            <State>
++              <option name="FILTERS">
++                <map>
++                  <entry key="branch">
++                    <value>
++                      <list>
++                        <option value="development" />
++                      </list>
++                    </value>
++                  </entry>
++                </map>
++              </option>
++            </State>
++          </value>
++        </entry>
++      </map>
++    </option>
+   </component>
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="viewa" />
+     <MESSAGE value="views" />
+-    <option name="LAST_COMMIT_MESSAGE" value="views" />
++    <MESSAGE value="Lab8 - backend [users models and views]" />
++    <option name="LAST_COMMIT_MESSAGE" value="Lab8 - backend [users models and views]" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+-    <SUITE FILE_PATH="coverage/backend$main.coverage" NAME="main Coverage Results" MODIFIED="1683380105515" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Documents/UBB/Semester 4/Systems for Design and Implementation/Labs/SQLGenerator" />
++    <SUITE FILE_PATH="coverage/backend$main.coverage" NAME="main Coverage Results" MODIFIED="1683380105515" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../SQLGenerator" />
++    <SUITE FILE_PATH="coverage/backend$sql_scripts.coverage" NAME="sql_scripts Coverage Results" MODIFIED="1683487452124" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../SQLGenerator" />
++    <SUITE FILE_PATH="coverage/backend$Register.coverage" NAME="Register Coverage Results" MODIFIED="1683497403667" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/api/views" />
+   </component>
+ </project>
+\ No newline at end of file

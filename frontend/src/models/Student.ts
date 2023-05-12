@@ -10,4 +10,7 @@ export interface Student {
     grades?: Grade[];
     avg_grade?: number;
     no_courses?: number;
+    user?: number;
+    username?: string;
+
 }

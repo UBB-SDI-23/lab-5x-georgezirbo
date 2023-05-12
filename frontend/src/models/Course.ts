@@ -12,4 +12,6 @@ export interface Course {
     year: string;
     grades?: Grade[];
     no_students?: number;
+    user?: number;
+    username?: string;
 }
