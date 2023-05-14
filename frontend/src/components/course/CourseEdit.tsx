@@ -9,8 +9,8 @@ import {
     Box
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 import { BACKEND_API_URL } from "../../../constants";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -19,6 +19,7 @@ import axios from "axios";
 import { Course } from "../../models/Course";
 import { Teacher } from "../../models/Teacher";
 import { debounce } from "lodash";
+import {getUsername, isModerator, isUser} from "../utils";
 
 export const CourseEdit = () => {
     const navigate = useNavigate();

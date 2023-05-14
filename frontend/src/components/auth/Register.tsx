@@ -5,12 +5,13 @@ import axios from "axios";
 import {BACKEND_API_URL} from "../../../constants";
 import {Course} from "../../models/Course";
 import {User} from "../../models/User";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import jwt_decode from "jwt-decode";
 import {Token} from "../../models/Token";
 import {Profiler} from "inspector";
 import {Profile} from "../../models/Profile";
+import {getUser, isUser} from "../utils";
 export const Register = () => {
     //const classes = useStyles();
     const navigate = useNavigate();
@@ -41,8 +42,8 @@ export const Register = () => {
         age: false
     });
 
-    const isFirstNameValid = profile.fname != "";
-    const isLastNameValid = profile.lname != "";
+    const isFirstNameValid = profile.fname?.match(/^[a-zA-Z]+$/);
+    const isLastNameValid = profile.lname?.match(/^[a-zA-Z]+$/);
     const isGenderValid = profile.gender?.match(/^[FM]$/);
     const isAgeValid = profile.age && profile?.age > 0;
     const isUsernameValid = user.username.match(/^[a-zA-Z0-9_]+$/)
@@ -75,13 +76,11 @@ export const Register = () => {
         try {
             const response = await axios.post(`${BACKEND_API_URL}token/`, user);
             console.log(response.data);
-            console.log(jwt_decode(response.data.access));
-            const user_id = (jwt_decode(response.data.access) as { user_id: string }).user_id;
-            profile.user = parseInt(user_id);
+            localStorage.setItem('auth', JSON.stringify(jwt_decode(response.data.access)));
+            profile.user = getUser();
             localStorage.setItem('token', JSON.stringify(response.data));
-            localStorage.setItem('username', user.username);
         } catch (error) {
-            alert("There is no active user with these credentials.");
+            alert("There is no active admin with these credentials.");
             console.log(error);
         }
 
@@ -91,14 +90,14 @@ export const Register = () => {
             console.log(response.data);
             navigate(`/profile/${user.username}/`);
         } catch (error) {
-            alert("A profile for this user could not be created.");
+            alert("A profile for this admin could not be created.");
             console.log(error);
         }
 
     };
 
 
-    return (
+    return isUser() ? (<Navigate to='/no-permission/' />) : (
         !confirm ? (<Container maxWidth="sm">
             <h1 style={{paddingBottom: "25px", paddingTop: "60px"}}>
                 Register
@@ -146,7 +145,7 @@ export const Register = () => {
                             onFocus={(e) => setTouchedFields({...touchedFields, fname: true})}
                             required
                             error={touchedFields.fname && !isFirstNameValid}
-                            helperText={touchedFields.fname && !isFirstNameValid ? 'Invalid fname. ' : ''}
+                            helperText={touchedFields.fname && !isFirstNameValid ? 'Invalid fname. Only letters are admitted.' : ''}
                         />
                         <TextField
                             label="Lastname"
@@ -158,7 +157,7 @@ export const Register = () => {
                             onFocus={(e) => setTouchedFields({...touchedFields, lname: true})}
                             required
                             error={touchedFields.lname && !isLastNameValid}
-                            helperText={touchedFields.lname && !isLastNameValid ? 'Invalid lname. ' : ''}
+                            helperText={touchedFields.lname && !isLastNameValid ? 'Invalid lname. Only letters are admitted.' : ''}
                         />
                         <TextField
                             label="Bio"

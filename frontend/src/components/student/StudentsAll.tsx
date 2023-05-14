@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Student } from "../../models/Student";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CircularProgress, IconButton, Tooltip, Box} from "@mui/material";
-import ReadMoreIcon from "@mui/icons-material/ReadMore";
+import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Link } from "react-router-dom";
@@ -11,6 +11,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import {Paginator} from "../Pagination";
+import {getUser, getUsername, isModerator, isUser} from "../utils";
+import axios from "axios";
 
 export const StudentAll = () => {
 	const [students, setStudents] = useState<Student[]>([]);
@@ -18,7 +20,6 @@ export const StudentAll = () => {
 	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(25);
 	const [totalRows, setTotalRows] = useState(0);
-	const crt = (page - 1) * pageSize + 1;
 	const [isLastPage, setIsLastPage] = useState(false);
 
 	const setCurrentPage = (newPage: number) => {
@@ -43,9 +44,12 @@ export const StudentAll = () => {
 
 	const fetchStudents = async () => {
 		setLoading(true);
+		const config = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
+		const DefaultPageSize = parseInt(config.data.size);
+		setPageSize(DefaultPageSize);
 		const start=new Date().getTime()
 		const response = await fetch(
-			`${BACKEND_API_URL}student/?page=${page}&page_size=${pageSize}`
+			`${BACKEND_API_URL}student/?page=${page}&page_size=${DefaultPageSize}`
 		);
 		console.log(`GET STUDENTS: ${(new Date().getTime() - start)/1000} seconds`)
 		const { count, next, previous, results } = await response.json();
@@ -58,6 +62,7 @@ export const StudentAll = () => {
 	useEffect(() => {
 		fetchStudents();
 	}, [page]);
+
 
 	if (!loading && students.length === 0) {
 		return <div>No students</div>;
@@ -95,21 +100,30 @@ export const StudentAll = () => {
 			headerName: "Operations",
 			width: 150,
 			align: 'center', headerAlign: 'center',
-			renderCell: (params) => (
-				<Container>
-					<IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/student/${params.row.sid}/edit/`}>
-						<Tooltip title="Edit course" arrow>
-							<EditIcon color="primary" />
-						</Tooltip>
-					</IconButton>
+			renderCell: (params) => {
+				if (params.row.username === getUsername() || isModerator()) {
+					return (
+						<Container>
+							<IconButton component={Link} sx={{ml: 3, mr: 3}} to={`/student/${params.row.sid}/edit/`}>
+								<Tooltip title="Edit student" arrow>
+									<EditIcon color="primary"/>
+								</Tooltip>
+							</IconButton>
 
-					<IconButton component={Link} sx={{ mr: 3 }} to={`/student/${params.row.sid}/remove/`}>
-						<Tooltip title="Delete course" arrow>
-							<DeleteForeverIcon sx={{ color: "red" }} />
+							<IconButton component={Link} sx={{mr: 3}} to={`/student/${params.row.sid}/remove/`}>
+								<Tooltip title="Delete student" arrow>
+									<DeleteForeverIcon sx={{color: "red"}}/>
+								</Tooltip>
+							</IconButton>
+						</Container>)
+				} else {
+					return (<IconButton component={Link} sx={{ml: 3, mr: 3}} to={`/student/${params.row.sid}/details/`}>
+						<Tooltip title="View details" arrow>
+							<InfoIcon color="primary" />
 						</Tooltip>
-					</IconButton>
-				</Container>
-			),
+					</IconButton>)
+				}
+			},
 		},
 	];
 
@@ -131,7 +145,7 @@ export const StudentAll = () => {
 			courses: student.no_courses,
 			username: student.username,
 			user: student.user,
-			sid: student.sid, // add the sid field to use it in the operations renderer
+			sid: student.sid,
 		};
 	});
 
@@ -145,11 +159,13 @@ export const StudentAll = () => {
 			{!loading && students.length === 0 && <p>No students found</p>}
 			{!loading && (
 				<Box sx={{paddingBottom: "10px"}}>
-					<IconButton component={Link} sx={{ mr: 3 }} to={`/student/add/`}>
-						<Tooltip title="Add a new student" arrow>
-							<AddIcon sx={{color: "green"}} />
-						</Tooltip>
-					</IconButton>
+					{isUser() ?
+						(<IconButton component={Link} sx={{ mr: 3 }} to={`/student/add/`}>
+							<Tooltip title="Add a new student" arrow>
+								<AddIcon sx={{color: "green"}} />
+							</Tooltip>
+						</IconButton>) : null
+					}
 					<IconButton component={Link} sx={{ mr: 3 }} to={`/student/by-average/`}>
 						<Tooltip title="Sort By Average Grade" arrow>
 							<BarChart sx={{ color: "purple" }} />
@@ -160,13 +176,12 @@ export const StudentAll = () => {
 			{!loading && students.length > 0 && (
 				<Container style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap',}}>
 					<DataGrid
-						columns={columns}
+						columns={getUser()?columns:columns.slice(0, -1)}
 						rows={rows}
 						autoHeight
 						hideFooter={true}
 					/>
 					<Paginator
-						rowsPerPage={pageSize}
 						totalRows={totalRows}
 						currentPage={page}
 						setPage={setCurrentPage}

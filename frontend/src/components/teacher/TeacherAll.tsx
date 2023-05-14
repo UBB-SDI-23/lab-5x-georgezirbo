@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CircularProgress, IconButton, Tooltip, Box} from "@mui/material";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
@@ -11,6 +11,9 @@ import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import { Teacher } from "../../models/Teacher";
 import {Paginator} from "../Pagination"
+import {getUser, getUsername, isModerator, isUser} from "../utils";
+import InfoIcon from "@mui/icons-material/Info";
+import axios from "axios";
 
 export const TeacherAll = () => {
 	const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -41,10 +44,13 @@ export const TeacherAll = () => {
     }
 
     const fetchTeachers = async () => {
-        setLoading(true);
+		setLoading(true);
+		const config = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
+		const DefaultPageSize = parseInt(config.data.size);
+		setPageSize(DefaultPageSize);
 		const start = new Date().getTime()
         const response = await fetch(
-          `${BACKEND_API_URL}teacher/?page=${page}&page_size=${pageSize}`
+          `${BACKEND_API_URL}teacher/?page=${page}&page_size=${DefaultPageSize}`
         );
 		console.log(`GET TEACHERS: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
@@ -101,21 +107,30 @@ export const TeacherAll = () => {
 			headerName: "Operations",
 			width: 150,
 			align: 'center', headerAlign: 'center',
-			renderCell: (params) => (
-			  <Container>
-				  <IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/teacher/${params.row.tid}/edit/`}>
-					  <Tooltip title="Edit teacher" arrow>
-					  <EditIcon color="primary" />
-					  </Tooltip>
-				  </IconButton>
-		
-				  <IconButton component={Link} sx={{ mr: 3 }} to={`/teacher/${params.row.tid}/remove/`}>
-					  <Tooltip title="Delete teacher" arrow>
-					  <DeleteForeverIcon sx={{ color: "red" }} />
-					  </Tooltip>
-				  </IconButton>
-			  </Container>
-			),
+			renderCell: (params) => {
+				if (params.row.username === getUsername() || isModerator()) {
+					return (
+						<Container>
+							<IconButton component={Link} sx={{ml: 3, mr: 3}} to={`/teacher/${params.row.tid}/edit/`}>
+								<Tooltip title="Edit teacher" arrow>
+									<EditIcon color="primary"/>
+								</Tooltip>
+							</IconButton>
+
+							<IconButton component={Link} sx={{mr: 3}} to={`/teacher/${params.row.tid}/remove/`}>
+								<Tooltip title="Delete teacher" arrow>
+									<DeleteForeverIcon sx={{color: "red"}}/>
+								</Tooltip>
+							</IconButton>
+						</Container>)
+				} else {
+					return (<IconButton component={Link} sx={{ml: 3, mr: 3}} to={`/teacher/${params.row.tid}/details/`}>
+						<Tooltip title="View details" arrow>
+							<InfoIcon color="primary" />
+						</Tooltip>
+					</IconButton>)
+				}
+			},
 		  },
 	  ];
 
@@ -134,8 +149,8 @@ export const TeacherAll = () => {
 		  rank: getValue[teacher.rank],
 		  descr: teacher.descr,
 		  courses: teacher.no_courses,
-			username: teacher.username,
-			user: teacher.user,
+		  username: teacher.username,
+		  user: teacher.user,
 		  tid: teacher.tid, // add the tid field to use it in the operations renderer
 		};
 	  });
@@ -148,7 +163,7 @@ export const TeacherAll = () => {
 			</h1>
 			{loading && <CircularProgress />}
 			{!loading && teachers.length === 0 && <p>No teachers found</p>}
-			{!loading && (
+			{!loading && isUser() && (
 				<Box sx={{paddingBottom: "10px"}}>
 					<IconButton component={Link} sx={{ mr: 3 }} to={`/teacher/add/`}>
 						<Tooltip title="Add a new teacher" arrow>
@@ -160,13 +175,12 @@ export const TeacherAll = () => {
 			{!loading && teachers.length > 0 && (
 				<Container style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>
 				<DataGrid
-				columns={columns}
+				columns={getUser()?columns:columns.slice(0, -1)}
 				rows={rows}
 				autoHeight
 				hideFooter={true}
 				/>
 				<Paginator
-					rowsPerPage={pageSize}
 					totalRows={totalRows}
 					currentPage={page}
 					setPage={setCurrentPage}

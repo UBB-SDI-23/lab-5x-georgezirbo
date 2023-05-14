@@ -84,6 +84,11 @@ class ProfileSerializer(DynamicFieldsModelSerializer):
         model = Profile
         fields = '__all__'
 
+class DefaultPageSizeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DefaultPageSize
+        fields = '__all__'
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
     @classmethod

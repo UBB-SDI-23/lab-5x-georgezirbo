@@ -5,10 +5,11 @@ import axios from "axios";
 import {BACKEND_API_URL} from "../../../constants";
 import {Course} from "../../models/Course";
 import {User} from "../../models/User";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, Navigate, useNavigate} from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import jwt_decode from "jwt-decode";
 import {Token} from "../../models/Token";
+import {isUser} from "../utils";
 
 export const Login = () => {
     //const classes = useStyles();
@@ -18,15 +19,13 @@ export const Login = () => {
         password: ""
     });
 
-    const [token, setToken] = useState<Token | null>();
-
     const [touchedFields, setTouchedFields] = useState<{ username: boolean, password: boolean }>({
         username: false,
         password: false
     });
 
 
-    const isUsernameValid = user.username.match(/^[a-zA-Z0-9_]+$/)
+    const isUsernameValid = user.username.match(/^.+$/)
     const isPasswordValid = user.password.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9_]+$/)
     const isFormValid = isUsernameValid && isPasswordValid;
 
@@ -36,17 +35,16 @@ export const Login = () => {
             console.log(`Username: ${user.username}, Password: ${user.password}`);
             const response = await axios.post(`${BACKEND_API_URL}token/`, user);
             console.log(response.data);
-            setToken(response.data);
             localStorage.setItem('token', JSON.stringify(response.data));
-            localStorage.setItem('username', user.username);
+            localStorage.setItem('auth', JSON.stringify(jwt_decode(response.data.access)));
             navigate(`/profile/${user.username}/`);
         } catch (error) {
-            alert("There is no active user with these credentials.");
+            alert("There is no active admin with these credentials.");
             console.log(error);
         }
     };
 
-    return (
+    return isUser() ? (<Navigate to='/no-permission/' />) : (
         <Container maxWidth="sm">
             <h1 style={{paddingBottom: "25px", paddingTop: "60px"}}>
                 Log In
@@ -84,14 +82,27 @@ export const Login = () => {
                             error={touchedFields.password && !isPasswordValid}
                             helperText={touchedFields.password && !isPasswordValid ? 'Invalid password. It should contain at least a lowercase, uppercase, digit and no special characters.' : ''}
                         />
-                        <Button style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} type="submit" disabled={!isFormValid}>
+
+                        <Button
+                            variant="contained"
+
+                            type="submit" disabled={!isFormValid}
+                            sx={{
+                                width: "100%",
+                                backgroundColor: "primary", color: "#fff",
+                                "&:hover": {
+                                    backgroundColor: "black",
+                                    color: "white",
+                                    borderColor: "white",
+                                },
+                            }}
+                        >
                             Log In
                         </Button>
                     </form>
                 </CardContent>
                 <CardActions></CardActions>
             </Card>
-        </Container>
-    );
+        </Container>);
 };
 

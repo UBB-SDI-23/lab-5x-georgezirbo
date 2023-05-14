@@ -7,7 +7,7 @@ export const AppHome = () => {
         <React.Fragment>
             <Container maxWidth="sm">
                 <h1>
-                    Welcome to my school app!
+                    Welcome to AcademicHub!
                 </h1>
             </Container>
 		</React.Fragment>

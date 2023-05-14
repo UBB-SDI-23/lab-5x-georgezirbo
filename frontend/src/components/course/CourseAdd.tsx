@@ -9,8 +9,8 @@ import {
     Box
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -20,6 +20,7 @@ import { Course } from "../../models/Course";
 import { Teacher } from "../../models/Teacher";
 import { BACKEND_API_URL } from "../../../constants";
 import { debounce } from "lodash";
+import {getUser, isAdmin, isUser} from "../utils";
 
 export const CourseAdd = () => {
 	const navigate = useNavigate();
@@ -31,7 +32,8 @@ export const CourseAdd = () => {
         faculty: "",
 		department: "",
 		year: "",
-		teacher: 0
+		teacher: 0,
+		user: getUser()
 	});
 	
 	const isNameValid = course.name != "";
@@ -88,7 +90,7 @@ export const CourseAdd = () => {
 		}
 	};
 
-	return (
+	return !isUser() ? (<Navigate to='/no-permission/' />) : (
         <Container>
             <h1 style={{paddingBottom: "25px", paddingTop: "60px"}}>
 				Add Course

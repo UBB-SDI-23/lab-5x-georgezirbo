@@ -11,7 +11,7 @@ import { BACKEND_API_URL } from "../../../constants";
 import { Tooltip } from "react-bootstrap";
 import { List, ListItem, ListItemText, Grid } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
-import {logOut} from "../utils";
+import {getUsername, logOut} from "../utils";
 
 
 export const ProfileDetails = () => {
@@ -60,9 +60,11 @@ export const ProfileDetails = () => {
                     <p><b># of courses</b>: {profile?.no_courses}</p>
                     <p><b># of teacher</b>: {profile?.no_teacher}</p>
                 </CardContent>
-                <Button style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} type="submit" onClick={()=>{logOut(); navigate('/login/')}}>
-                    Log Out
-                </Button>
+                {username === getUsername() ? (
+                    <Button style={{ backgroundColor: "red", color: "white", width: "100%" }} type="submit" onClick={()=>{logOut(); navigate('/login/')}}>
+                        Log Out
+                    </Button>
+                ) : null}
 			</Card>
 		</Container>
 	);

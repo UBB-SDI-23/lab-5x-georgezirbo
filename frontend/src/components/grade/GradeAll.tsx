@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grade } from "../../models/Grade";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CircularProgress, IconButton, Tooltip, Box} from "@mui/material";
@@ -12,6 +12,9 @@ import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import FilterAltIcon from '@mui/icons-material/FilterAlt'
 import {Paginator} from "../Pagination"
+import {getUser, getUsername, isModerator, isUser} from "../utils";
+import InfoIcon from "@mui/icons-material/Info";
+import axios from "axios";
 
 export const GradeAll = () => {
 	const [grades, setGrades] = useState<Grade[]>([]);
@@ -43,10 +46,13 @@ export const GradeAll = () => {
     }
 
     const fetchGrades = async () => {
-        setLoading(true);
+		setLoading(true);
+		const config = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
+		const DefaultPageSize = parseInt(config.data.size);
+		setPageSize(DefaultPageSize);
 		const start = new Date().getTime()
         const response = await fetch(
-          `${BACKEND_API_URL}grade/?page=${page}&page_size=${pageSize}`
+          `${BACKEND_API_URL}grade/?page=${page}&page_size=${DefaultPageSize}`
         );
 		console.log(`GET GRADES: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
@@ -101,21 +107,29 @@ export const GradeAll = () => {
 		  headerName: "Operations",
 		  width: 150,
 		  align: 'center', headerAlign: 'center',
-		  renderCell: (params) => (
-			<Container>
-				<IconButton component={Link} sx={{ ml: 3,mr: 3 }} to={`/grade/${params.row.gid}/edit/`}>
-					<Tooltip title="Edit grade" arrow>
-					<EditIcon color="primary" />
-					</Tooltip>
-				</IconButton>
-	  
-				<IconButton component={Link} sx={{ mr: 3 }} to={`/grade/${params.row.gid}/remove/`}>
-					<Tooltip title="Delete grade" arrow>
-					<DeleteForeverIcon sx={{ color: "red" }} />
-					</Tooltip>
-				</IconButton>
-			</Container>
-		  ),
+		  renderCell: (params) => {
+			  if (params.row.username === getUsername() || isModerator()) {
+				  return (<Container>
+					  <IconButton component={Link} sx={{ml: 3, mr: 3}} to={`/grade/${params.row.gid}/edit/`}>
+						  <Tooltip title="Edit grade" arrow>
+							  <EditIcon color="primary"/>
+						  </Tooltip>
+					  </IconButton>
+
+					  <IconButton component={Link} sx={{mr: 3}} to={`/grade/${params.row.gid}/remove/`}>
+						  <Tooltip title="Delete grade" arrow>
+							  <DeleteForeverIcon sx={{color: "red"}}/>
+						  </Tooltip>
+					  </IconButton>
+				  </Container>)
+			  } else {
+				  return (<IconButton component={Link} sx={{ml: 3, mr: 3}} to={`/grade/${params.row.gid}/details/`}>
+					  <Tooltip title="View details" arrow>
+						  <InfoIcon color="primary" />
+					  </Tooltip>
+				  </IconButton>)
+			  }
+		  }
 		},
 	  ];
 	  
@@ -126,8 +140,8 @@ export const GradeAll = () => {
 		  student: grade.student_name,
 		  session: grade.session,
 		  retake: grade.retake,
-		username: grade.username,
-		user: grade.user,
+		  username: grade.username,
+		  user: grade.user,
 		  gid: grade.gid, // add the gid field to use it in the operations renderer
 		};
 	  }); 
@@ -142,12 +156,12 @@ export const GradeAll = () => {
 			{!loading && grades.length === 0 && <p>No grades found</p>}
 			{!loading && (
 				<Box sx={{paddingBottom: "10px"}}>
-					<IconButton component={Link} sx={{ mr: 3 }} to={`/grade/add/`}>
-						<Tooltip title="Add a new grade" arrow>
-							<AddIcon sx={{color: "green"}} />
-						</Tooltip>
-					</IconButton>
-
+					{isUser() ?
+						(<IconButton component={Link} sx={{ mr: 3 }} to={`/grade/add/`}>
+							<Tooltip title="Add a new grade" arrow>
+								<AddIcon sx={{color: "green"}} />
+							</Tooltip>
+						</IconButton>) : null}
 					<IconButton component={Link} sx={{ mr: 3 }} to={`/grade/filter/`}>
 						<Tooltip title="Filter Grades" arrow>
 							<FilterAltIcon sx={{ color: "blue" }} />
@@ -158,13 +172,12 @@ export const GradeAll = () => {
 			{!loading && grades.length > 0 && (
 				<Container style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap'}}>
 					<DataGrid
-					columns={columns}
+					columns={getUser()?columns:columns.slice(0, -1)}
 					rows={rows}
 					autoHeight
 					hideFooter={true}
 					/>
 					<Paginator
-                        rowsPerPage={pageSize}
                         totalRows={totalRows}
                         currentPage={page}
                         setPage={setCurrentPage}

@@ -12,6 +12,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import {Paginator} from "../Pagination"
+import axios from "axios";
         
 export const StudentByAverage = () => {
 	const [students, setStudents] = useState<Student[]>([]);
@@ -42,10 +43,13 @@ export const StudentByAverage = () => {
     }
 
     const fetchStudents = async () => {
-        setLoading(true);
+		setLoading(true);
+		const config = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
+		const DefaultPageSize = parseInt(config.data.size);
+		setPageSize(DefaultPageSize);
 		const start = new Date().getTime();
         const response = await fetch(
-          `${BACKEND_API_URL}student/by-average/?page=${page}&page_size=${pageSize}`
+          `${BACKEND_API_URL}student/by-average/?page=${page}&page_size=${DefaultPageSize}`
         );
 		console.log(`GET STUDENTS BY AVERAGE: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
@@ -120,7 +124,6 @@ export const StudentByAverage = () => {
 						hideFooter={true}
 						/>
 					<Paginator
-						rowsPerPage={pageSize}
 						totalRows={totalRows}
 						currentPage={page}
 						setPage={setCurrentPage}

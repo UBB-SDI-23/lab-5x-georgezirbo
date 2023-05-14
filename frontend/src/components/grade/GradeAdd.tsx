@@ -21,6 +21,7 @@ import { Student } from "../../models/Student";
 import { Course } from "../../models/Course";
 import { BACKEND_API_URL } from "../../../constants";
 import { debounce } from "lodash";
+import {getUser} from "../utils";
 
 export const GradeAdd = () => {
 	const navigate = useNavigate();
@@ -29,7 +30,8 @@ export const GradeAdd = () => {
 	const [courses, setCourses] = useState<Course[]>([]);
 	const [grade, setGrade] = useState<Grade>({
         session: 0,
-        retake: 0
+        retake: 0,
+		user: getUser()
 	});
 
 	const fetchStudentSuggestions = async (query: string) => {
@@ -158,6 +160,8 @@ export const GradeAdd = () => {
 							label="Session"
 							variant="outlined"
 							fullWidth
+							type={'number'}
+							inputProps={{ step: 0.1 }}
 							sx={{ mb: 2 }}
 							onChange={(event) => setGrade({ ...grade, session: parseFloat(event.target.value)})}
 							error={validateSession && !isSessionValid}
@@ -168,6 +172,8 @@ export const GradeAdd = () => {
 							id="retake"
 							label="Retake"
 							variant="outlined"
+							type={'number'}
+							inputProps={{ step: 0.1 }}
 							fullWidth
 							sx={{ mb: 2 }}
 							onChange={(event) => setGrade({ ...grade, retake: parseFloat(event.target.value)})}
@@ -176,7 +182,6 @@ export const GradeAdd = () => {
 							onFocus={() => setValidateRetake(true)}
 							
 						/>
-						
 						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Add Grade</Button>
 					</form>
 				</CardContent>

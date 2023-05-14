@@ -46,7 +46,7 @@ class Student(models.Model):
     email = models.CharField(max_length=100, validators=[RegexValidator(r'[a-z]{2,10}\.[a-z]{2,10}@stud\.com', message='Please introduce a valid email')], blank=True, null=True, verbose_name='Email')
     phone = models.CharField(max_length=10, validators=[RegexValidator(r'07\d{8}', message='Please introduce a valid phone number')], blank=True, null=True, verbose_name='Phone')
     courses = models.ManyToManyField('Course', through='Grade', related_name='courses')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='student_users', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='student_users')
 
     class Meta:
         ordering=['sid']
@@ -62,7 +62,7 @@ class Grade(models.Model):
     student = models.ForeignKey('Student', on_delete=models.CASCADE, verbose_name='Student', related_name='student_grades', db_column='student')
     session = models.FloatField(verbose_name='Session Grade', validators=[MinValueValidator(1), MaxValueValidator(10)])
     retake = models.FloatField(verbose_name='Retake Grade', validators=[MinValueValidator(1), MaxValueValidator(10)], blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='grade_users', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='grade_users')
 
     class Meta:
         ordering=['gid']
@@ -82,7 +82,7 @@ class Course(models.Model):
     teacher = models.ForeignKey('Teacher', on_delete=models.CASCADE, verbose_name='Teacher', related_name='teacher_courses', db_column='teacher')
     year = models.PositiveIntegerField(default=2023, validators=[MinValueValidator(2000), MaxValueValidator(2023)], verbose_name='Year')
     students = models.ManyToManyField('Student', through='Grade', related_name='students')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='course_users', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='course_users')
 
     def __str__(self):
         return f"\"{self.name}\" @ {self.university} - {self.faculty} {self.year}"
@@ -97,7 +97,7 @@ class Teacher(models.Model):
     lname = models.CharField(max_length=100, verbose_name="Last Name")
     rank = models.CharField(max_length=1, verbose_name="Rank", choices=[('P', 'Professor'), ('A', 'Associate'), ('L', 'Lecturer')])
     descr = models.TextField(verbose_name="Description", null=False, blank=True, default='')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='teacher_users', null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id', related_name='teacher_users')
 
     def __str__(self):
         return f"{self.fname} {self.lname} [{self.rank}]"
@@ -105,6 +105,10 @@ class Teacher(models.Model):
     class Meta:
         ordering=['tid']
         indexes=[models.Index(fields=['fname', 'lname'])]
+
+class DefaultPageSize(models.Model):
+    pid = models.AutoField(primary_key=True)
+    size = models.IntegerField(default=2023, validators=[MinValueValidator(10), MaxValueValidator(100)])
 
 
 
