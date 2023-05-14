@@ -16,6 +16,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { Teacher } from "../../models/Teacher";
 import { BACKEND_API_URL } from "../../../constants";
+import {getUser} from "../utils";
 
 export const TeacherAdd = () => {
 	const navigate = useNavigate();
@@ -24,7 +25,8 @@ export const TeacherAdd = () => {
         fname: "",
         lname: "",
         rank: "P",
-		descr: ""
+		descr: "",
+		user: getUser()
 	});
 
 	const getKey: {[key: string]: string} = {

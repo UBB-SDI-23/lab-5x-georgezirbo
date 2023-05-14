@@ -17,6 +17,7 @@ import { BarChart, Minimize} from "@mui/icons-material";
 import FilterAltIcon from '@mui/icons-material/FilterAlt'
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {Paginator} from "../Pagination"
+import axios from "axios";
 
 export const GradeFilter = () => {
 	const [grades, setGrades] = useState<Grade[]>([]);
@@ -50,9 +51,12 @@ export const GradeFilter = () => {
 
     const fetchGrades = async () => {
         setLoading(true);
+        const config = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
+        const DefaultPageSize = parseInt(config.data.size);
+        setPageSize(DefaultPageSize);
         const start = new Date().getTime()
         const response = await fetch(
-          `${BACKEND_API_URL}grade/?final-gte=${MinFinal}&page=${page}&page_size=${pageSize}`
+          `${BACKEND_API_URL}grade/?final-gte=${MinFinal}&page=${page}&page_size=${DefaultPageSize}`
         );
         console.log(`GET GRADES FILTER: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
@@ -144,7 +148,6 @@ export const GradeFilter = () => {
 					hideFooter={true}
 					/>
 					<Paginator
-                        rowsPerPage={pageSize}
                         totalRows={totalRows}
                         currentPage={page}
                         setPage={setCurrentPage}

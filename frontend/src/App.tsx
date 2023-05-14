@@ -29,8 +29,22 @@ import { TeacherDetails } from './components/teacher/TeacherDetails'
 import { TeacherRemove } from './components/teacher/TeacherRemove'
 import { Login } from './components/auth/Login'
 import { NavMenu } from './components/NavMenu'
-import {ProfileDetails} from "./components/user/ProfileDetails";
+import {ProfileDetails} from "./components/admin/ProfileDetails";
 import {Register} from "./components/auth/Register";
+import {UsersAll} from "./components/admin/UserAll";
+import {UserRemove} from "./components/admin/UserRemove";
+import {UserEdit} from "./components/admin/UserEdit";
+import {ManageData} from "./components/admin/ManageData";
+import {DeleteStudents} from "./components/admin/DeleteStudents";
+import {DeleteCourses} from "./components/admin/DeleteCourses";
+import {DeleteGrades} from "./components/admin/DeleteGrades";
+import {DeleteTeachers} from "./components/admin/DeleteTeacher";
+import {NoPermission} from "./components/NoPermission";
+import {GenerateStudents} from "./components/admin/GenerateStudents";
+import {GenerateCourses} from "./components/admin/GenerateCourses";
+import {GenerateGrades} from "./components/admin/GenerateGrades";
+import {GenerateTeachers} from "./components/admin/GenerateTeachers";
+import {GenerateUsers} from "./components/admin/GenerateUsers";
 
 function App() {
 
@@ -67,7 +81,22 @@ function App() {
         <Route path="profile/:username/" element={<ProfileDetails />} />
         <Route path="login/" element={<Login />} />
         <Route path="register/" element={<Register />} />
-      </Routes> 
+        <Route path="users/" element={<UsersAll />} />
+        <Route path="user/:userID/remove/" element={<UserRemove />} />
+        <Route path="user/:userID/edit/" element={<UserEdit />} />
+        <Route path="data/" element={<ManageData />} />
+        <Route path="generate/student/" element={<GenerateStudents />} />
+        <Route path="generate/course/" element={<GenerateCourses />} />
+        <Route path="generate/grade/" element={<GenerateGrades />} />
+        <Route path="generate/teacher/" element={<GenerateTeachers />} />
+        <Route path="generate/user/" element={<GenerateUsers />} />
+        <Route path="delete/student/" element={<DeleteStudents />} />
+        <Route path="delete/course/" element={<DeleteCourses />} />
+        <Route path="delete/teacher/" element={<DeleteTeachers />} />
+        <Route path="delete/grade/" element={<DeleteTeachers />} />
+        <Route path="no-permission/" element={<NoPermission />} />
+
+      </Routes>
     </BrowserRouter>
   );
 }

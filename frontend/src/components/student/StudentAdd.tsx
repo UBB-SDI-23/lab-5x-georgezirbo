@@ -18,6 +18,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { Student } from "../../models/Student";
 import { BACKEND_API_URL } from "../../../constants";
+import {getUser} from "../utils";
 
 export const StudentAdd = () => {
 	const navigate = useNavigate();
@@ -28,6 +29,7 @@ export const StudentAdd = () => {
         cnp: "",
         email: "",
         phone: "",
+		user: getUser()
 	});
 	
 	const isFnameValid = student.fname != "";
