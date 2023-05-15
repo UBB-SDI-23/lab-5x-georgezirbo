@@ -6,7 +6,7 @@ import {Link, Navigate} from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { BACKEND_API_URL } from "../../../constants";
 import {Paginator} from "../Pagination";
-import {isAdmin} from "../utils";
+import {getAccessToken, isAdmin} from "../utils";
 import axios from "axios";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -43,7 +43,11 @@ export const DeleteTeachers = () => {
     const deleteTeachers = async (event: { preventDefault: () => void }) => {
         event.preventDefault();
         try {
-            await axios.delete(`${BACKEND_API_URL}delete/teachers/`, { data: { ids: selectedIds } });
+            await axios.delete(`${BACKEND_API_URL}delete/teachers/`, { data: { ids: selectedIds },
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             window.location.reload();
         } catch (error) {
             console.log(error);

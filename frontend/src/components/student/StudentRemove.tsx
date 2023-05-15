@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { BACKEND_API_URL } from "../../../constants";
+import {getAccessToken} from "../utils";
 
 export const StudentRemove = () => {
 	const { studentID } = useParams();
@@ -11,7 +12,11 @@ export const StudentRemove = () => {
 	const handleDelete = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
         try {
-            await axios.delete(`${BACKEND_API_URL}student/${studentID}/`);
+            await axios.delete(`${BACKEND_API_URL}student/${studentID}/`, {
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
+			});
             navigate('/student/');
         } catch (error) {
             console.log(error);

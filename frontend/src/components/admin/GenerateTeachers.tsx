@@ -3,7 +3,7 @@ import {Button, TextField} from "@mui/material";
 import {Navigate, useNavigate} from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { BACKEND_API_URL } from "../../../constants";
-import {isAdmin} from "../utils";
+import {getAccessToken, isAdmin} from "../utils";
 
 export const GenerateTeachers = () => {
     const navigate = useNavigate();
@@ -12,7 +12,10 @@ export const GenerateTeachers = () => {
     const generateTeachers = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try{
-            await fetch(`${BACKEND_API_URL}generate/teachers/?n=${no}`);
+            await fetch(`${BACKEND_API_URL}generate/teachers/?n=${no}`, { headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             navigate(`/teacher/`);
         }catch(error){
             console.log(error);

@@ -17,7 +17,7 @@ import { BACKEND_API_URL } from "../../../constants";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { User } from "../../models/User";
-import {isAdmin} from "../utils";
+import {getAccessToken, isAdmin} from "../utils";
 
 export const UserEdit = () => {
     const navigate = useNavigate();
@@ -58,7 +58,10 @@ export const UserEdit = () => {
     useEffect(() => {
         const fetchUser =async () => {
             try{
-                const response = await fetch(`${BACKEND_API_URL}user/${userID}/`);
+                const response = await fetch(`${BACKEND_API_URL}user/${userID}/`, { headers: {
+                        Authorization: `Bearer ${getAccessToken()}`,
+                    }
+                });
                 const user = await response.json();
                 setUser(user);
             } catch (error) {
@@ -73,7 +76,10 @@ export const UserEdit = () => {
     const editUser = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try {
-            await axios.put(`${BACKEND_API_URL}user/${userID}/`, user);
+            await axios.put(`${BACKEND_API_URL}user/${userID}/`, user,{ headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             navigate(`/users/`);
         }catch(error){
             console.log(error);

@@ -3,7 +3,7 @@ import {Button, TextField} from "@mui/material";
 import {Navigate, useNavigate} from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { BACKEND_API_URL } from "../../../constants";
-import {isAdmin} from "../utils";
+import {getAccessToken, isAdmin} from "../utils";
 
 export const GenerateUsers = () => {
     const navigate = useNavigate();
@@ -12,7 +12,10 @@ export const GenerateUsers = () => {
     const generateUsers = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try{
-            await fetch(`${BACKEND_API_URL}generate/users/?n=${no}`);
+            await fetch(`${BACKEND_API_URL}generate/users/?n=${no}`, { headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             navigate(`/users/`);
         }catch(error){
             console.log(error);

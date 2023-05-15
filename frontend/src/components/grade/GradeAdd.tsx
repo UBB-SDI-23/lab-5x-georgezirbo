@@ -94,7 +94,9 @@ export const GradeAdd = () => {
     const addGrade = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
         try {
-			delete grade?.retake;
+			if(grade?.retake){
+				delete grade?.retake;
+			}
             console.log(grade);
             const response = await axios.post(`${BACKEND_API_URL}grade/`, grade, {
 				headers: {

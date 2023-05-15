@@ -11,7 +11,7 @@ import jwt_decode from "jwt-decode";
 import {Token} from "../../models/Token";
 import {Profiler} from "inspector";
 import {Profile} from "../../models/Profile";
-import {getUser, isUser} from "../utils";
+import {getAccessToken, getUser, isUser} from "../utils";
 export const Register = () => {
     //const classes = useStyles();
     const navigate = useNavigate();
@@ -86,7 +86,10 @@ export const Register = () => {
 
         try {
             console.log(profile)
-            const response = await axios.put(`${BACKEND_API_URL}profile/${user.username}/`, profile);
+            const response = await axios.put(`${BACKEND_API_URL}profile/${user.username}/`, profile, { headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             console.log(response.data);
             navigate(`/profile/${user.username}/`);
         } catch (error) {

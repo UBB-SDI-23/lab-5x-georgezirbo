@@ -17,6 +17,7 @@ import { BACKEND_API_URL } from "../../../constants";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { Teacher } from "../../models/Teacher";
+import {getAccessToken} from "../utils";
 
 export const TeacherEdit = () => {
     const navigate = useNavigate();
@@ -59,7 +60,11 @@ export const TeacherEdit = () => {
     const editTeacher = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try {
-            await axios.put(`${BACKEND_API_URL}teacher/${teacherID}/`, teacher);
+            await axios.put(`${BACKEND_API_URL}teacher/${teacherID}/`, teacher, {
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                },
+            });
             navigate(`/teacher/${teacherID}/details/`);
         }catch(error){
             console.log(error);

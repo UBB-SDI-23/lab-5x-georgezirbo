@@ -11,7 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import {Paginator} from "../Pagination";
-import {getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
+import {getAccessToken, getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
 import axios from "axios";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -67,7 +67,11 @@ export const DeleteStudents = () => {
     const deleteStudents = async (event: { preventDefault: () => void }) => {
         event.preventDefault();
         try {
-            await axios.delete(`${BACKEND_API_URL}delete/students/`, { data: { ids: selectedIds } });
+            await axios.delete(`${BACKEND_API_URL}delete/students/`, { data: { ids: selectedIds },
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             window.location.reload();
         } catch (error) {
             console.log(error);
