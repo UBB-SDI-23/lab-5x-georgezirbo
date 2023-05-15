@@ -56,7 +56,7 @@ export const GradeDetails = () => {
 				<CardActions>
                     {grade?.username === getUsername() || isModerator() ? (
                         <Box>
-                            <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${gradeID}/edit/`}>
+                            <IconButton component={Link} sx={{ mr: 3 }} to={`/grade/${gradeID}/edit/`}>
                                 <Tooltip title="Edit grade">
                                     <EditIcon color="primary" />
                                 </Tooltip>

@@ -3,7 +3,7 @@ import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { BACKEND_API_URL } from "../../../constants";
-import {isAdmin} from "../utils";
+import {getAccessToken, isAdmin} from "../utils";
 import React from "react";
 
 export const UserRemove = () => {
@@ -13,7 +13,10 @@ export const UserRemove = () => {
     const handleDelete = async (event: { preventDefault: () => void }) => {
         event.preventDefault();
         try {
-            await axios.delete(`${BACKEND_API_URL}user/${userID}/`);
+            await axios.delete(`${BACKEND_API_URL}user/${userID}/`, { headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             navigate('/users/');
         } catch (error) {
             console.log(error);

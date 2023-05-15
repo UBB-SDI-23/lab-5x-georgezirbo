@@ -11,7 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import {Paginator} from "../Pagination";
-import {getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
+import {getAccessToken, getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
 import axios from "axios";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -22,7 +22,10 @@ export const GenerateStudents = () => {
     const generateStudents = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try{
-            await fetch(`${BACKEND_API_URL}generate/students/?n=${no}`);
+            await fetch(`${BACKEND_API_URL}generate/students/?n=${no}`, { headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             navigate(`/student/`);
         }catch(error){
             console.log(error);

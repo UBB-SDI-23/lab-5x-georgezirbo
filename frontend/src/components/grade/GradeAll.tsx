@@ -29,22 +29,6 @@ export const GradeAll = () => {
         setPage(newPage);
     }
 
-    const goToNextPage = () => {
-        if (isLastPage) {
-            return;
-        }
-
-        setPage(page + 1);
-    }
-
-    const goToPrevPage = () => {
-        if (page === 1) {
-            return;
-        }
-
-        setPage(page - 1);
-    }
-
     const fetchGrades = async () => {
 		setLoading(true);
 		const config = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);

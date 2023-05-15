@@ -3,7 +3,7 @@ import {Button, TextField} from "@mui/material";
 import {Navigate, useNavigate} from "react-router-dom";
 import { Container } from "react-bootstrap";
 import { BACKEND_API_URL } from "../../../constants";
-import {isAdmin} from "../utils";
+import {getAccessToken, isAdmin} from "../utils";
 
 export const GenerateCourses = () => {
     const navigate = useNavigate();
@@ -12,9 +12,12 @@ export const GenerateCourses = () => {
     const generateCourses = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try{
-            await fetch(`${BACKEND_API_URL}generate/courses/?n=${no}`);
+            await fetch(`${BACKEND_API_URL}generate/courses/?n=${no}`, { headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             navigate(`/course/`);
-        }catch(error){
+        } catch(error){
             console.log(error);
             alert(error);
         }

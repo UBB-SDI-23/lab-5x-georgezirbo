@@ -78,7 +78,7 @@ export const CourseDetails = () => {
                                 {course?.grades?.map((grade) => (
                                     <TableRow key={grade.gid}>
                                         <TableCell style={{ borderRight: '1px solid gray' }}>{grade.student_name}</TableCell>
-                                        <TableCell align="center">{Math.max(grade.session, grade.retake)}</TableCell>
+                                        <TableCell align="center">{Math.max(grade.session, grade?.retake ? grade?.retake : 0)}</TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

@@ -17,6 +17,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { Student } from "../../models/Student";
+import {getAccessToken} from "../utils";
 
 export const StudentEdit = () => {
     const navigate = useNavigate();
@@ -60,7 +61,11 @@ export const StudentEdit = () => {
     const editStudent = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try {
-            await axios.put(`${BACKEND_API_URL}student/${studentID}/`, student);
+            await axios.put(`${BACKEND_API_URL}student/${studentID}/`, student, {
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
+			});
             navigate(`/student/${studentID}/details/`);
         }catch(error){
             console.log(error);

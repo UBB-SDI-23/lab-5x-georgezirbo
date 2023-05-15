@@ -11,7 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import {Paginator} from "../Pagination";
-import {getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
+import {getAccessToken, getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
 import axios from "axios";
 
 export const UsersAll = () => {
@@ -50,7 +50,10 @@ export const UsersAll = () => {
         setPageSize(DefaultPageSize);
         const start=new Date().getTime()
         const response = await fetch(
-            `${BACKEND_API_URL}user/?page=${page}&page_size=${DefaultPageSize}`
+            `${BACKEND_API_URL}user/?page=${page}&page_size=${DefaultPageSize}`, { headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            }
         );
         console.log(`GET USERS: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
@@ -71,7 +74,7 @@ export const UsersAll = () => {
     const columns: GridColDef[] = [
 
         { field: "index", headerName: "#", width: 20 },
-        { field: "username", headerName: "Username", width: 100, align: 'center', headerAlign: 'center',
+        { field: "username", headerName: "Username", width: 150, align: 'center', headerAlign: 'center',
             renderCell: (params) => (
                 <Link to={`/profile/${params.row.username}/`} title="View user profile">
                     {params.value}

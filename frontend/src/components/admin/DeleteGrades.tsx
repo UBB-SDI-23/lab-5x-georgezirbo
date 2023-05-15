@@ -11,7 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import {Paginator} from "../Pagination";
-import {getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
+import {getAccessToken, getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
 import axios from "axios";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
@@ -30,22 +30,6 @@ export const DeleteGrades = () => {
         setPage(newPage);
     }
 
-    const goToNextPage = () => {
-        if (isLastPage) {
-            return;
-        }
-
-        setPage(page + 1);
-    }
-
-    const goToPrevPage = () => {
-        if (page === 1) {
-            return;
-        }
-
-        setPage(page - 1);
-    }
-
     const fetchGrades = async () => {
         setLoading(true);
         const config = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
@@ -53,8 +37,7 @@ export const DeleteGrades = () => {
         setPageSize(DefaultPageSize);
         const start=new Date().getTime()
         const response = await fetch(
-            `${BACKEND_API_URL}grade/?page=${page}&page_size=${DefaultPageSize}`
-        );
+            `${BACKEND_API_URL}grade/?page=${page}&page_size=${DefaultPageSize}`);
         console.log(`GET STUDENTS: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
         setGrades(results);
@@ -67,7 +50,11 @@ export const DeleteGrades = () => {
     const deleteGrades = async (event: { preventDefault: () => void }) => {
         event.preventDefault();
         try {
-            await axios.delete(`${BACKEND_API_URL}delete/grades/`, { data: { ids: selectedIds } });
+            await axios.delete(`${BACKEND_API_URL}delete/grades/`, { data: { ids: selectedIds },
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             window.location.reload();
         } catch (error) {
             console.log(error);

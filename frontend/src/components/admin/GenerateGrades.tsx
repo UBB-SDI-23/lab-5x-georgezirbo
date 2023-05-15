@@ -11,9 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { BACKEND_API_URL } from "../../../constants";
 import { BarChart } from "@mui/icons-material";
 import {Paginator} from "../Pagination";
-import {getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
-import axios from "axios";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import {getAccessToken, getUser, getUsername, isAdmin, isModerator, isUser} from "../utils";
 
 export const GenerateGrades = () => {
     const navigate = useNavigate();
@@ -22,7 +20,10 @@ export const GenerateGrades = () => {
     const generateGrades = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try{
-            await fetch(`${BACKEND_API_URL}generate/grades/?n=${no}`);
+            await fetch(`${BACKEND_API_URL}generate/grades/?n=${no}`, { headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                }
+            });
             navigate(`/grade/`);
         }catch(error){
             console.log(error);
