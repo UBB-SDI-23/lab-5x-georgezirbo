@@ -20,6 +20,7 @@ import { Grade } from "../../models/Grade";
 import { Student } from "../../models/Student";
 import { Course } from "../../models/Course";
 import { debounce } from "lodash";
+import {getAccessToken} from "../utils";
 
 export const GradeEdit = () => {
     const navigate = useNavigate();
@@ -35,7 +36,11 @@ export const GradeEdit = () => {
 	const fetchStudentSuggestions = async (query: string) => {
 		try {
 			const response = await axios.get<Student[]>(
-				`${BACKEND_API_URL}student/autocomplete/?query=${query}`
+				`${BACKEND_API_URL}student/autocomplete/?query=${query}`, {
+					headers: {
+						Authorization: `Bearer ${getAccessToken()}`,
+					},
+				}
 			);
 			const data = await response.data;
 			setStudents(data);
@@ -47,7 +52,11 @@ export const GradeEdit = () => {
 	const fetchCourseSuggestions = async (query: string) => {
 		try {
 			const response = await axios.get<Course[]>(
-				`${BACKEND_API_URL}course/autocomplete/?query=${query}`
+				`${BACKEND_API_URL}course/autocomplete/?query=${query}`, {
+					headers: {
+						Authorization: `Bearer ${getAccessToken()}`,
+					},
+				}
 			);
 			const data = await response.data;
 			setCourses(data);
@@ -83,7 +92,7 @@ export const GradeEdit = () => {
 	};
     
       const isSessionValid = grade.session >= 0 && grade.session <= 10 && grade.session;
-      const isRetakeValid = (grade.retake >= 0 && grade.retake <= 10 && grade.retake) || !grade.retake;
+      const isRetakeValid = (grade.retake && grade.retake >= 0 && grade.retake <= 10) || !grade.retake;
       const isFormValid = isSessionValid && isRetakeValid;
       const [validateSession, setValidateSession] = useState(false);
       const [validateRetake, setValidateRetake] = useState(false);
@@ -108,7 +117,11 @@ export const GradeEdit = () => {
     const editGrade = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try{
-            await axios.put(`${BACKEND_API_URL}grade/${gradeID}/`, grade);
+            await axios.put(`${BACKEND_API_URL}grade/${gradeID}/`, grade, {
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
+			});
 			navigate(`/grade/${gradeID}/details/`);
         }catch(error){
             console.log(error);
@@ -174,7 +187,7 @@ export const GradeEdit = () => {
 							fullWidth
 							value = {grade.session}
 							type={'number'}
-							inputProps={{ step: 0.1 }}
+							inputProps={{ step: 0.01 }}
 							sx={{ mb: 2 }}
 							onChange={(event) => setGrade({ ...grade, session: parseFloat(event.target.value)})}
 							error={validateSession && !isSessionValid}
@@ -187,7 +200,7 @@ export const GradeEdit = () => {
 							variant="outlined"
 							type={'number'}
 							value = {grade.retake ? grade.retake : ''}
-							inputProps={{ step: 0.1 }}
+							inputProps={{ step: 0.01 }}
 							fullWidth
 							sx={{ mb: 2 }}
 							onChange={(event) => setGrade({ ...grade, retake: parseFloat(event.target.value)})}
@@ -196,7 +209,7 @@ export const GradeEdit = () => {
 							onFocus={() => setValidateRetake(true)}
 
 						/>
-						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Add Grade</Button>
+						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Edit Grade</Button>
 					</form>
 				</CardContent>
 				<CardActions></CardActions>
