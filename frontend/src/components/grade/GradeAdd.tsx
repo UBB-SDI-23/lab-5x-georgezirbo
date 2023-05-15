@@ -94,7 +94,7 @@ export const GradeAdd = () => {
     const addGrade = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
         try {
-			delete grade.retake;
+			delete grade?.retake;
             console.log(grade);
             const response = await axios.post(`${BACKEND_API_URL}grade/`, grade, {
 				headers: {
@@ -166,7 +166,7 @@ export const GradeAdd = () => {
 							variant="outlined"
 							fullWidth
 							type={'number'}
-							inputProps={{ step: 0.1 }}
+							inputProps={{ step: 0.01 }}
 							sx={{ mb: 2 }}
 							onChange={(event) => setGrade({ ...grade, session: parseFloat(event.target.value)})}
 							error={validateSession && !isSessionValid}
@@ -178,7 +178,7 @@ export const GradeAdd = () => {
 							label="Retake"
 							variant="outlined"
 							type={'number'}
-							inputProps={{ step: 0.1 }}
+							inputProps={{ step: 0.01 }}
 							fullWidth
 							sx={{ mb: 2 }}
 							onChange={(event) => setGrade({ ...grade, retake: parseFloat(event.target.value)})}
