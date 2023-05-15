@@ -9,8 +9,8 @@ import {
     Box
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -18,6 +18,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { Student } from "../../models/Student";
 import { BACKEND_API_URL } from "../../../constants";
+import {getAccessToken, getUser, isUser} from "../utils";
 
 export const StudentAdd = () => {
 	const navigate = useNavigate();
@@ -28,6 +29,7 @@ export const StudentAdd = () => {
         cnp: "",
         email: "",
         phone: "",
+		user: getUser()
 	});
 	
 	const isFnameValid = student.fname != "";
@@ -46,7 +48,12 @@ export const StudentAdd = () => {
 		event.preventDefault();
         try {
             console.log(student);
-            const response = await axios.post(`${BACKEND_API_URL}student/`, student);
+            const response = await axios.post(`${BACKEND_API_URL}student/`, student, {
+					headers: {
+						Authorization: `Bearer ${getAccessToken()}`,
+					},
+				}
+			);
 			const sid = response.data.sid;
             navigate(`/student/${sid}/details`);
         } catch (error) {
@@ -55,82 +62,80 @@ export const StudentAdd = () => {
 		}
 	};
 
-	return (
-		<>
-			<Container>
-				<h1 style={{paddingBottom: "25px", paddingTop: "60px"}}>
-					Add Student
-				</h1>
-				<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
-					<IconButton component={Link} sx={{ mr: 3 }} to={`/`}>
-						<ArrowBackIcon />
-					</IconButton>{" "}
-				</Box>
-				<Card>
-					<CardContent>
-						<form onSubmit={addStudent}>
-							<TextField
-								id="fname"
-								label="First Name"
-								variant="outlined"
-								fullWidth
-								sx={{ mb: 2 }}
-								onChange={(event) => setStudent({ ...student, fname: event.target.value })}
-								error={validateFname && !isFnameValid}
-								helperText={validateFname && !isFnameValid ? 'Invalid first name.':''}
-								onFocus={() => setvalidateFname(true)}
-							/>
-							<TextField
-								id="lname"
-								label="Last Name"
-								variant="outlined"
-								fullWidth
-								sx={{ mb: 2 }}
-								onChange={(event) => setStudent({ ...student, lname: event.target.value })}
-								error={validateLname && !isLnameValid}
-								helperText={validateLname && !isLnameValid ? 'Invalid last name.':''}
-								onFocus={() => setvalidateLname(true)}
-							/>
-							<TextField
-								id="cnp"
-								label="CNP"
-								variant="outlined"
-								fullWidth
-								sx={{ mb: 2 }}
-								onChange={(event) => { setStudent({ ...student, cnp: event.target.value });  setValidateCnp}}
-								error={validateCnp && !isCnpValid}
-								helperText={validateCnp && !isCnpValid ? 'Invalid CNP.' : ''}
-								onFocus={() => setValidateCnp(true)}
-							/>
+	return !isUser() ? (<Navigate to='/no-permission/' />) : (
+		<Container>
+			<h1 style={{paddingBottom: "25px", paddingTop: "60px"}}>
+				Add Student
+			</h1>
+			<Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingBottom: "10px"}}>
+				<IconButton component={Link} sx={{ mr: 3 }} to={`/`}>
+					<ArrowBackIcon />
+				</IconButton>{" "}
+			</Box>
+			<Card>
+				<CardContent>
+					<form onSubmit={addStudent}>
+						<TextField
+							id="fname"
+							label="First Name"
+							variant="outlined"
+							fullWidth
+							sx={{ mb: 2 }}
+							onChange={(event) => setStudent({ ...student, fname: event.target.value })}
+							error={validateFname && !isFnameValid}
+							helperText={validateFname && !isFnameValid ? 'Invalid first name.':''}
+							onFocus={() => setvalidateFname(true)}
+						/>
+						<TextField
+							id="lname"
+							label="Last Name"
+							variant="outlined"
+							fullWidth
+							sx={{ mb: 2 }}
+							onChange={(event) => setStudent({ ...student, lname: event.target.value })}
+							error={validateLname && !isLnameValid}
+							helperText={validateLname && !isLnameValid ? 'Invalid last name.':''}
+							onFocus={() => setvalidateLname(true)}
+						/>
+						<TextField
+							id="cnp"
+							label="CNP"
+							variant="outlined"
+							fullWidth
+							sx={{ mb: 2 }}
+							onChange={(event) => { setStudent({ ...student, cnp: event.target.value });  setValidateCnp}}
+							error={validateCnp && !isCnpValid}
+							helperText={validateCnp && !isCnpValid ? 'Invalid CNP.' : ''}
+							onFocus={() => setValidateCnp(true)}
+						/>
 
-							<TextField
-								id="email"
-								label="Email"
-								variant="outlined"
-								fullWidth
-								sx={{ mb: 2 }}
-								onChange={(event) => setStudent({ ...student, email: event.target.value })}
-								error={validateEmail && !isEmailValid}
-								helperText={validateEmail && !isEmailValid ? 'Invalid email.':''}
-								onFocus={() => setValidateEmail(true)}
-							/>
-							<TextField
-								id="phone"
-								label="Phone"
-								variant="outlined"
-								fullWidth
-								sx={{ mb: 2 }}
-								onChange={(event) => setStudent({ ...student, phone: event.target.value })}
-								error={validatePhone && !isPhoneValid}
-								helperText={validatePhone && !isPhoneValid ? 'Invalid phone number.' : ''}
-								onFocus={() => setValidatePhone(true)}
-							/>
-							<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Add Student</Button>
-						</form>
-					</CardContent>
-					<CardActions></CardActions>
-				</Card>
-			</Container>
-		</>
+						<TextField
+							id="email"
+							label="Email"
+							variant="outlined"
+							fullWidth
+							sx={{ mb: 2 }}
+							onChange={(event) => setStudent({ ...student, email: event.target.value })}
+							error={validateEmail && !isEmailValid}
+							helperText={validateEmail && !isEmailValid ? 'Invalid email.':''}
+							onFocus={() => setValidateEmail(true)}
+						/>
+						<TextField
+							id="phone"
+							label="Phone"
+							variant="outlined"
+							fullWidth
+							sx={{ mb: 2 }}
+							onChange={(event) => setStudent({ ...student, phone: event.target.value })}
+							error={validatePhone && !isPhoneValid}
+							helperText={validatePhone && !isPhoneValid ? 'Invalid phone number.' : ''}
+							onFocus={() => setValidatePhone(true)}
+						/>
+						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Add Student</Button>
+					</form>
+				</CardContent>
+				<CardActions></CardActions>
+			</Card>
+		</Container>
 	);
 };

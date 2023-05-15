@@ -7,6 +7,8 @@ from django.db.models import \
 from rest_framework import \
     generics, \
     status
+from rest_framework.permissions import \
+    IsAuthenticatedOrReadOnly
 from rest_framework.response import \
     Response
 
@@ -14,6 +16,8 @@ from api.models import \
     Grade
 from api.pagination import \
     CustomPagination
+from api.permissions import \
+    HasEditPermissionOrReadOnly
 from api.serializers import \
     GradeSerializer
 
@@ -21,6 +25,7 @@ from api.serializers import \
 class GradeView(generics.GenericAPIView):
     serializer_class = GradeSerializer
     pagination_class = CustomPagination
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         start_time = time.time()
@@ -48,19 +53,22 @@ class GradeView(generics.GenericAPIView):
 
 class GradeDetailView(generics.GenericAPIView):
     serializer_class = GradeSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, HasEditPermissionOrReadOnly]
+
 
     def get(self, request, pk, *args, **kwargs):
         try:
-            student = Grade.objects.get(pk=pk)
-            serializer = GradeSerializer(student)
+            grade = Grade.objects.get(pk=pk)
+            serializer = GradeSerializer(grade)
             return Response(serializer.data)
         except Grade.DoesNotExist:
             return Response({'error': 'Grade does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, pk, *args, **kwargs):
         try:
-            student = Grade.objects.get(pk=pk)
-            serializer = GradeSerializer(student, data=request.data)
+            grade = Grade.objects.get(pk=pk)
+            self.check_object_permissions(request, grade)
+            serializer = GradeSerializer(grade, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -71,8 +79,9 @@ class GradeDetailView(generics.GenericAPIView):
 
     def delete(self, request, pk, *args, **kwargs):
         try:
-            student = Grade.objects.get(pk=pk)
-            student.delete()
+            grade = Grade.objects.get(pk=pk)
+            self.check_object_permissions(request, grade)
+            grade.delete()
             return Response({'message': 'Grade deleted'}, status=status.HTTP_204_NO_CONTENT)
         except Grade.DoesNotExist:
             return Response({'error': 'Grade does not exist'}, status=404)

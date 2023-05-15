@@ -11,6 +11,7 @@ import { BACKEND_API_URL } from "../../../constants";
 import { Tooltip } from "react-bootstrap";
 import { List, ListItem, ListItemText, Grid } from "@mui/material";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import {getUsername, isModerator} from "../utils";
 
 
 export const StudentDetails = () => {
@@ -78,17 +79,20 @@ export const StudentDetails = () => {
             </CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
 				<CardActions>
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${studentID}/edit/`}>
-                        <Tooltip title="Edit student">
-                        <EditIcon color="primary" />
-                        </Tooltip>
-                    </IconButton>
-        
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${studentID}/remove/`}>
-                        <Tooltip title="Delete student">
-                        <DeleteForeverIcon sx={{ color: "red" }} />
-                        </Tooltip>
-                </IconButton>
+                    {student?.username === getUsername() || isModerator() ? (
+                    <Box>
+                        <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${studentID}/edit/`}>
+                            <Tooltip title="Edit student">
+                                <EditIcon color="primary" />
+                            </Tooltip>
+                        </IconButton>
+
+                        <IconButton component={Link} sx={{ mr: 3 }} to={`/student/${studentID}/remove/`}>
+                            <Tooltip title="Delete student">
+                                <DeleteForeverIcon sx={{ color: "red" }} />
+                            </Tooltip>
+                        </IconButton>
+                    </Box>): null}
                 </CardActions>
                 </Box>
 			</Card>

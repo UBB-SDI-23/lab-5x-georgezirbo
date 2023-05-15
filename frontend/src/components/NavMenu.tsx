@@ -2,7 +2,7 @@ import {Box, AppBar, Toolbar, IconButton, Typography, Button, Container} from "@
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
-import {getToken, getUsername} from "./utils";
+import {getToken, getUsername, isAdmin} from "./utils";
 import { AccountCircle } from '@mui/icons-material';
 
 export const NavMenu = () => {
@@ -20,7 +20,7 @@ export const NavMenu = () => {
 					to="/login/"
 					sx={{
 						mr: 2,
-						backgroundColor: "#808080", color: "#fff",
+						backgroundColor: "primary", color: "#fff",
 						"&:hover": {
 							backgroundColor: "black",
 							color: "white",
@@ -35,7 +35,7 @@ export const NavMenu = () => {
 					component={Link}
 					to="/register/"
 					sx={{
-						backgroundColor: "#808080", color: "#fff",
+						backgroundColor: "primary", color: "#fff",
 						"&:hover": {
 							backgroundColor: "black",
 							color: "white",
@@ -49,17 +49,58 @@ export const NavMenu = () => {
 		);
 	};
 
-	const renderProfileButton = () => {
+	const renderAdminButtons = () => {
 		return (
-			<IconButton
-				color="inherit"
-				sx={{ backgroundColor: "#fff", color: "#fff", '&:hover': { backgroundColor: 'black' } }}
-				onClick={() => navigate(`/profile/${getUsername()}/`)}
-			>
-				<AccountCircle />
-			</IconButton>
+			<Box>
+				<Button
+					to="/users/"
+					component={Link}
+					sx={{
+						mr: 2,
+						color: 'white',
+						borderColor: '#333',
+						'&:hover': {
+							backgroundColor: 'black',
+							color: 'white',
+							borderColor: 'white'
+						},
+					}}
+				>
+					Manage Users
+				</Button>
+				<Button
+					to="/data/"
+					component={Link}
+					sx={{
+						mr: 2,
+						color: 'white',
+						borderColor: '#333',
+						'&:hover': {
+							backgroundColor: 'black',
+							color: 'white',
+							borderColor: 'white'
+						},
+					}}
+				>
+					Manage Data
+				</Button>
+			</Box>
+
 		);
 	};
+
+	const renderProfileButton = () => {
+		return (
+			<Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+				<AccountCircle />
+				<Link to={`/profile/${getUsername()}/`} style={{ color: 'blue', textDecoration: 'underline' }}>
+					<Typography>{getUsername()}</Typography>
+				</Link>
+			</Box>
+		);
+	};
+
+
 
 	return (
 		<Box sx={{ flexGrow: 1}}>
@@ -106,7 +147,7 @@ export const NavMenu = () => {
 						to="/grade/"
 						component={Link}
 						sx={{
-							mr: 5,
+							mr: 2,
 							color: 'white',
 							borderColor: '#333',
 							'&:hover': {
@@ -123,7 +164,7 @@ export const NavMenu = () => {
 						to="/course/"
 						component={Link}
 						sx={{
-							mr: 5,
+							mr: 2,
 							color: 'white',
 							borderColor: '#333',
 							'&:hover': {
@@ -140,7 +181,7 @@ export const NavMenu = () => {
 						to="/teacher/"
 						component={Link}
 						sx={{
-							mr: 5,
+							mr: 2,
 							color: 'white',
 							borderColor: '#333',
 							'&:hover': {
@@ -152,7 +193,8 @@ export const NavMenu = () => {
 					>
 						Teachers
 					</Button>
-					<Box sx={{ ml: 'auto' }}>
+					<Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center' }}>
+						{isAdmin() && renderAdminButtons()}
 						{token ? renderProfileButton() : renderLoginButton()}
 					</Box>
 

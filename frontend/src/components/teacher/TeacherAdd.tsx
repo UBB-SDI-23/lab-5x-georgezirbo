@@ -10,12 +10,13 @@ import {
     Box
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import axios from "axios";
 import { Teacher } from "../../models/Teacher";
 import { BACKEND_API_URL } from "../../../constants";
+import {getAccessToken, getUser, isUser} from "../utils";
 
 export const TeacherAdd = () => {
 	const navigate = useNavigate();
@@ -24,7 +25,8 @@ export const TeacherAdd = () => {
         fname: "",
         lname: "",
         rank: "P",
-		descr: ""
+		descr: "",
+		user: getUser()
 	});
 
 	const getKey: {[key: string]: string} = {
@@ -43,7 +45,11 @@ export const TeacherAdd = () => {
 		event.preventDefault();
         try {
             console.log(teacher);
-            const response = await axios.post(`${BACKEND_API_URL}teacher/`, teacher);
+            const response = await axios.post(`${BACKEND_API_URL}teacher/`, teacher, {
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
+			});
             const tid = response.data.tid;
 			navigate(`/teacher/${tid}/details`);
 		} catch (error) {
@@ -52,7 +58,7 @@ export const TeacherAdd = () => {
 		}
 	};
 
-	return (
+	return !isUser() ? (<Navigate to='/no-permission/' />) : (
         <Container>
             <h1 style={{paddingBottom: "25px", paddingTop: "60px"}}>
 				Add Teacher

@@ -11,6 +11,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { BACKEND_API_URL } from "../../../constants";
 import {Paginator} from "../Pagination"
+import axios from "axios";
         
 export const CourseByNoStudents = () => {
 	const [courses, setCourses] = useState<Course[]>([]);
@@ -42,10 +43,13 @@ export const CourseByNoStudents = () => {
     }
 
     const fetchCourses = async () => {
-        setLoading(true);
+		setLoading(true);
+		const config = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
+		const DefaultPageSize = parseInt(config.data.size);
+		setPageSize(DefaultPageSize);
 		const start = new Date().getTime()
         const response = await fetch(
-          `${BACKEND_API_URL}course/by-no-students/?page=${page}&page_size=${pageSize}`
+          `${BACKEND_API_URL}course/by-no-students/?page=${page}&page_size=${DefaultPageSize}`
         );
 		console.log(`GET COURSES BY NO STUDENTS: ${(new Date().getTime() - start)/1000} seconds`)
         const { count, next, previous, results } = await response.json();
@@ -117,7 +121,6 @@ export const CourseByNoStudents = () => {
 					hideFooter={true}
 					/>
 					<Paginator
-                        rowsPerPage={pageSize}
                         totalRows={totalRows}
                         currentPage={page}
                         setPage={setCurrentPage}

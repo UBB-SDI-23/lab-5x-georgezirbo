@@ -9,8 +9,8 @@ import {
     Box
 } from "@mui/material";
 import { Container } from "@mui/system";
-import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import {Link, Navigate, useNavigate, useParams} from "react-router-dom";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
@@ -21,6 +21,7 @@ import { Student } from "../../models/Student";
 import { Course } from "../../models/Course";
 import { BACKEND_API_URL } from "../../../constants";
 import { debounce } from "lodash";
+import {getAccessToken, getUser, isUser} from "../utils";
 
 export const GradeAdd = () => {
 	const navigate = useNavigate();
@@ -29,7 +30,8 @@ export const GradeAdd = () => {
 	const [courses, setCourses] = useState<Course[]>([]);
 	const [grade, setGrade] = useState<Grade>({
         session: 0,
-        retake: 0
+        retake: 0,
+		user: getUser()
 	});
 
 	const fetchStudentSuggestions = async (query: string) => {
@@ -84,7 +86,7 @@ export const GradeAdd = () => {
 
 	
 	const isSessionValid = grade.session >= 0 && grade.session <= 10 && grade.session;
-	const isRetakeValid = (grade.retake >= 0 && grade.retake <= 10 && grade.retake) || !grade.retake;
+	const isRetakeValid = (grade?.retake && grade?.retake >= 0 && grade?.retake <= 10) || !grade.retake;
 	const isFormValid = isSessionValid && isRetakeValid;
 	const [validateSession, setValidateSession] = useState(false);
 	const [validateRetake, setValidateRetake] = useState(false);
@@ -92,8 +94,13 @@ export const GradeAdd = () => {
     const addGrade = async (event: { preventDefault: () => void }) => {
 		event.preventDefault();
         try {
+			delete grade.retake;
             console.log(grade);
-            const response = await axios.post(`${BACKEND_API_URL}grade/`, grade);
+            const response = await axios.post(`${BACKEND_API_URL}grade/`, grade, {
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
+			});
             const gid = response.data.gid
 			navigate(`/grade/${gid}/details`);
         } catch (error) {
@@ -102,7 +109,7 @@ export const GradeAdd = () => {
 		}
 	};
 
-	return (
+	return !isUser() ? (<Navigate to='/no-permission/' />) : (
         <Container>
             <h1 style={{paddingBottom: "25px", paddingTop: "60px"}}>
 				Add Grade
@@ -158,6 +165,8 @@ export const GradeAdd = () => {
 							label="Session"
 							variant="outlined"
 							fullWidth
+							type={'number'}
+							inputProps={{ step: 0.1 }}
 							sx={{ mb: 2 }}
 							onChange={(event) => setGrade({ ...grade, session: parseFloat(event.target.value)})}
 							error={validateSession && !isSessionValid}
@@ -168,6 +177,8 @@ export const GradeAdd = () => {
 							id="retake"
 							label="Retake"
 							variant="outlined"
+							type={'number'}
+							inputProps={{ step: 0.1 }}
 							fullWidth
 							sx={{ mb: 2 }}
 							onChange={(event) => setGrade({ ...grade, retake: parseFloat(event.target.value)})}
@@ -176,7 +187,6 @@ export const GradeAdd = () => {
 							onFocus={() => setValidateRetake(true)}
 							
 						/>
-						
 						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Add Grade</Button>
 					</form>
 				</CardContent>

@@ -127,9 +127,9 @@ export const GradeEdit = () => {
                 </IconButton>{" "}
             </Box>
 			<Card>
-                <CardContent>
+				<CardContent>
 					<form onSubmit={editGrade}>
-                        <Autocomplete
+						<Autocomplete
 							id="course"
 							options={courses}
 							getOptionLabel={(option) => `${option.name} @ ${option.university} - ${option.faculty}]: (${option.year})`}
@@ -146,12 +146,13 @@ export const GradeEdit = () => {
 								}
 							}}
 							isOptionEqualToValue={(option, value) => option.cid === value.cid}
+							onFocus={() => {if (!grade.course) fetchCourseSuggestions('')} }
 						/>
 						<Autocomplete
 							id="student"
 							options={students}
-							getOptionLabel={(option) => `${option.fname} ${option.lname} [${option.cnp}]`}
-							renderInput={(params) => <TextField {...params} label="Student" variant="outlined" sx={{ mb: 2 }}/>}
+							getOptionLabel={(option) => `${option.fname} ${option.lname}`}
+							renderInput={(params) => <TextField {...params} label="Student" variant="outlined" placeholder={grade.student_name} sx={{ mb: 2 }}/>}
 							filterOptions={(x) => x}
 							onInputChange={handleStudentChange}
 							onChange={(event, value) => {
@@ -164,15 +165,18 @@ export const GradeEdit = () => {
 								}
 							}}
 							isOptionEqualToValue={(option, value) => option.sid === value.sid}
+							onFocus={() => {if (!grade.student) fetchStudentSuggestions('')} }
 						/>
-                        <TextField
+						<TextField
 							id="session"
 							label="Session"
 							variant="outlined"
 							fullWidth
-                            sx={{ mb: 2 }}
-                            value={grade.session}
-							onChange={(event) => setGrade({ ...grade, session: parseFloat(event.target.value)?parseFloat(event.target.value):0})}
+							value = {grade.session}
+							type={'number'}
+							inputProps={{ step: 0.1 }}
+							sx={{ mb: 2 }}
+							onChange={(event) => setGrade({ ...grade, session: parseFloat(event.target.value)})}
 							error={validateSession && !isSessionValid}
 							helperText={validateSession && !isSessionValid ? 'Invalid session.':''}
 							onFocus={() => setValidateSession(true)}
@@ -181,15 +185,18 @@ export const GradeEdit = () => {
 							id="retake"
 							label="Retake"
 							variant="outlined"
+							type={'number'}
+							value = {grade.retake ? grade.retake : ''}
+							inputProps={{ step: 0.1 }}
 							fullWidth
 							sx={{ mb: 2 }}
-                            value={grade.retake}
-							onChange={(event) => setGrade({ ...grade, retake: parseFloat(event.target.value)?parseFloat(event.target.value):0})}
+							onChange={(event) => setGrade({ ...grade, retake: parseFloat(event.target.value)})}
 							error={validateRetake && !isRetakeValid}
 							helperText={validateRetake && !isRetakeValid ? 'Invalid retake.':''}
 							onFocus={() => setValidateRetake(true)}
+
 						/>
-						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Edit Grade</Button>
+						<Button type="submit" style={{ backgroundColor: "#808080", color: "#fff", width: "100%" }} disabled={!isFormValid}>Add Grade</Button>
 					</form>
 				</CardContent>
 				<CardActions></CardActions>

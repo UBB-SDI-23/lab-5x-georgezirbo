@@ -21,6 +21,7 @@ import axios from "axios";
 import { BACKEND_API_URL } from "../../../constants";
 import { Tooltip } from "react-bootstrap";
 import { List, ListItem, ListItemText, Grid } from "@mui/material";
+import {getUsername, isModerator} from "../utils";
 
 export const CourseDetails = () => {
 	const { courseID } = useParams();
@@ -87,17 +88,20 @@ export const CourseDetails = () => {
             </CardContent>
                 <Box sx={{ display: 'flex', justifyContent: 'center' }}>
 				<CardActions>
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/course/${courseID}/edit/`}>
-                        <Tooltip title="Edit course">
-                        <EditIcon color="primary" />
-                        </Tooltip>
-                    </IconButton>
-        
-                    <IconButton component={Link} sx={{ mr: 3 }} to={`/course/${courseID}/remove/`}>
-                        <Tooltip title="Delete course">
-                        <DeleteForeverIcon sx={{ color: "red" }} />
-                        </Tooltip>
-                </IconButton>
+                    {course?.username === getUsername() || isModerator() ? (
+                        <Box>
+                            <IconButton component={Link} sx={{ mr: 3 }} to={`/course/${courseID}/edit/`}>
+                                <Tooltip title="Edit course">
+                                    <EditIcon color="primary" />
+                                </Tooltip>
+                            </IconButton>
+
+                            <IconButton component={Link} sx={{ mr: 3 }} to={`/course/${courseID}/remove/`}>
+                                <Tooltip title="Delete course">
+                                    <DeleteForeverIcon sx={{ color: "red" }} />
+                                </Tooltip>
+                            </IconButton>
+                        </Box>): null}
                 </CardActions>
                 </Box>
 			</Card>

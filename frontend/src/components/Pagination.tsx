@@ -1,17 +1,32 @@
-import { debounce } from "lodash";
+import {debounce, parseInt} from "lodash";
 import { useCallback, useEffect } from "react";
-import { Box, IconButton } from '@mui/material';
+import {Box, IconButton, MenuItem, TextField} from '@mui/material';
 import { useState } from "react";
+import {getAccessToken, isAdmin} from "./utils";
+import axios from "axios";
+import {BACKEND_API_URL} from "../../constants";
 
 interface PaginatorProps {
-    rowsPerPage: number;
     totalRows: number;
     currentPage: number;
     setPage: (page: number) => void;
 }
 
-export const Paginator = ({ rowsPerPage, totalRows, currentPage,  setPage}: PaginatorProps) => {
+export const Paginator = ({totalRows, currentPage,  setPage}: PaginatorProps) => {
+    const [rowsPerPage, setRowsPerPage] = useState<number>(25);
 
+    useEffect(() => {
+        const getDefaultPageSize = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
+                setRowsPerPage(parseInt(response.data.size));
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        getDefaultPageSize();
+    }, []);
     const totalPages = Math.ceil(totalRows / rowsPerPage);
 
     const changeCurrentPage = (pageNumber: number) => {
@@ -74,6 +89,19 @@ export const Paginator = ({ rowsPerPage, totalRows, currentPage,  setPage}: Pagi
         };
     }, [debounceOnChange])
 
+    const editDefaultPageSize = async (pagesize: number) => {
+        try{
+            const response = await axios.put(`${BACKEND_API_URL}settings/pagesize/`, {size: pagesize}, {
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                },
+            });
+            await console.log(response.data);
+        }catch(error){
+            console.log(error);
+            alert(error);
+        }
+    };
 
     return (
         <Box display="flex" justifyContent="center" sx={{mt: 3}}>
@@ -95,6 +123,22 @@ export const Paginator = ({ rowsPerPage, totalRows, currentPage,  setPage}: Pagi
                 </IconButton>
             ))}
             <p style={{marginLeft: "20px"}}>  ({totalRows} results)</p>
+            {isAdmin() ?
+                (<TextField
+                id="pagesize"
+                label="Size"
+                variant="outlined"
+                fullWidth
+                select
+                defaultValue=""
+                sx={{ mb: 2, ml: 5, textAlign: "left" }}
+                onChange={(event) => {editDefaultPageSize(parseInt(event.target.value)); window.location.reload();}}
+            >
+                <MenuItem value="10">10</MenuItem>
+                <MenuItem value="25">25</MenuItem>
+                <MenuItem value="50">50</MenuItem>
+                <MenuItem value="100">100</MenuItem>
+            </TextField>) : null}
         </Box>
 
     )
