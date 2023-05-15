@@ -7,6 +7,8 @@ from django.db.models import \
 from rest_framework import \
     generics, \
     status
+from rest_framework.permissions import \
+    IsAuthenticatedOrReadOnly
 from rest_framework.response import \
     Response
 
@@ -14,6 +16,8 @@ from api.models import \
     Teacher
 from api.pagination import \
     CustomPagination
+from api.permissions import \
+    HasEditPermissionOrReadOnly
 from api.serializers import \
     TeacherSerializer
 
@@ -21,6 +25,7 @@ from api.serializers import \
 class TeacherView(generics.GenericAPIView):
     serializer_class = TeacherSerializer
     pagination_class = CustomPagination
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Teacher.objects.all().order_by('tid')
 
     def get(self, request, *args, **kwargs):
@@ -45,6 +50,7 @@ class TeacherView(generics.GenericAPIView):
 
 class TeacherDetailView(generics.GenericAPIView):
     serializer_class = TeacherSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, HasEditPermissionOrReadOnly]
 
     def get(self, request, pk, *args, **kwargs):
         try:
@@ -57,6 +63,7 @@ class TeacherDetailView(generics.GenericAPIView):
     def put(self, request, pk, *args, **kwargs):
         try:
             teacher = Teacher.objects.get(pk=pk)
+            self.check_object_permissions(request, teacher)
             serializer = self.get_serializer(teacher, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -69,6 +76,7 @@ class TeacherDetailView(generics.GenericAPIView):
     def delete(self, request, pk, *args, **kwargs):
         try:
             teacher = Teacher.objects.get(pk=pk)
+            self.check_object_permissions(request, teacher)
             teacher.delete()
             return Response({'message': 'Teacher deleted'}, status=status.HTTP_204_NO_CONTENT)
         except Teacher.DoesNotExist:
@@ -76,6 +84,8 @@ class TeacherDetailView(generics.GenericAPIView):
 
 class TeacherAutocompleteView(generics.GenericAPIView):
     serializer_class = TeacherSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
 
     def get(self, request, *args, **kwargs):
         start_time = time.time()

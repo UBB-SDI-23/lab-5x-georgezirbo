@@ -24,9 +24,12 @@ from api.models import \
     Teacher, \
     Course, \
     Grade
+from api.permissions import \
+    IsAdmin
 
 
 class GenerateStudents(APIView):
+    permission_classes = [IsAdmin]
     def get(self, request, *args, **kwargs):
         n = int(request.GET.get('n'))
         faker = Faker(['en_AU', 'en_CA', 'en_US', 'es_AR', 'fr_FR', 'es_CO', 'es_ES', 'it_IT', 'de_DE'])
@@ -62,6 +65,7 @@ class GenerateStudents(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GenerateTeachers(APIView):
+    permission_classes = [IsAdmin]
     def get(self, request, *args, **kwargs):
         n = int(request.GET.get('n'))
         faker = Faker(['en_AU', 'en_CA', 'en_US', 'es_AR', 'fr_FR', 'es_CO', 'es_ES', 'it_IT', 'de_DE'])
@@ -79,6 +83,7 @@ class GenerateTeachers(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GenerateGrades(APIView):
+    permission_classes = [IsAdmin]
     def get(self, request, *args, **kwargs):
         n = int(request.GET.get('n'))
         try:
@@ -101,6 +106,7 @@ class GenerateGrades(APIView):
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class GenerateCourses(APIView):
+    permission_classes = [IsAdmin]
     def get(self, request, *args, **kwargs):
         n = int(request.GET.get('n'))
 
@@ -146,6 +152,7 @@ class GenerateCourses(APIView):
 
 
 class GenerateUsers(APIView):
+    permission_classes = [IsAdmin]
     def get(self, request, *args, **kwargs):
         n = int(request.GET.get('n'))
         fake = Faker(['en_AU', 'en_CA', 'en_US', 'es_AR', 'fr_FR', 'es_CO', 'es_ES', 'it_IT', 'de_DE'])

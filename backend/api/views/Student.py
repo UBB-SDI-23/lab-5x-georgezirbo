@@ -13,11 +13,15 @@ from django.db.models.functions import \
 from rest_framework import \
     status, \
     generics
+from rest_framework.permissions import \
+    IsAuthenticatedOrReadOnly
 from rest_framework.response import \
     Response
 
 from api.models import \
     Student
+from api.permissions import \
+    HasEditPermissionOrReadOnly
 from api.serializers import \
     StudentSerializer
 from api.pagination import \
@@ -25,9 +29,9 @@ from api.pagination import \
 
 
 class StudentView(generics.GenericAPIView):
-
     serializer_class = StudentSerializer
     pagination_class = CustomPagination
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Student.objects.all().order_by('sid')
 
     def get(self, request, *args, **kwargs):
@@ -52,6 +56,7 @@ class StudentView(generics.GenericAPIView):
 
 class StudentDetailView(generics.GenericAPIView):
     serializer_class = StudentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly, HasEditPermissionOrReadOnly]
     queryset = Student.objects.all()
 
     def get(self, request, pk, *args, **kwargs):
@@ -66,6 +71,7 @@ class StudentDetailView(generics.GenericAPIView):
         try:
             student = Student.objects.get(pk=pk)
             serializer = StudentSerializer(student, data=request.data)
+            self.check_object_permissions(request, student)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -77,14 +83,19 @@ class StudentDetailView(generics.GenericAPIView):
     def delete(self, request, pk, *args, **kwargs):
         try:
             student = Student.objects.get(pk=pk)
+            self.check_object_permissions(request, student)
             student.delete()
             return Response({'message': 'Student deleted'}, status=status.HTTP_204_NO_CONTENT)
         except Student.DoesNotExist:
             return Response({'error': 'Student does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+
+
+
 class StudentByAverageView(generics.GenericAPIView):
     serializer_class = StudentSerializer
     pagination_class = CustomPagination
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Student.objects.all()\
             .annotate(avg_grade=Round(Avg(Greatest('student_grades__session', 'student_grades__retake')), 2))\
             .order_by(F('avg_grade').desc(nulls_last=True))
@@ -100,6 +111,7 @@ class StudentByAverageView(generics.GenericAPIView):
 
 class StudentAutocompleteView(generics.GenericAPIView):
     serializer_class = StudentSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         start_time = time.time()

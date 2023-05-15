@@ -20,6 +20,8 @@ from api.models import \
     Profile
 from api.pagination import \
     CustomPagination
+from api.permissions import \
+    IsAdmin
 from api.serializers import \
     UserSerializer
 
@@ -27,6 +29,7 @@ from api.serializers import \
 class UserView(generics.GenericAPIView):
     serializer_class = UserSerializer
     pagination_class = CustomPagination
+    permission_classes = [IsAdmin]
     queryset = User.objects.all().order_by('id')
 
     def get(self, request, *args, **kwargs):
@@ -47,6 +50,7 @@ class UserView(generics.GenericAPIView):
 
 class UserDetailView(generics.GenericAPIView):
     serializer_class = UserSerializer
+    permission_classes = [IsAdmin]
     pagination_class = CustomPagination
     queryset = User.objects.all().order_by('id')
 
@@ -61,6 +65,7 @@ class UserDetailView(generics.GenericAPIView):
     def put(self, request, pk, *args, **kwargs):
         try:
             user = User.objects.get(pk=pk)
+            self.check_object_permissions(request, user)
             serializer = self.get_serializer(user, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -73,6 +78,7 @@ class UserDetailView(generics.GenericAPIView):
     def delete(self, request, pk, *args, **kwargs):
         try:
             user = User.objects.get(pk=pk)
+            self.check_object_permissions(request, user)
             user.delete()
             return Response({'message': 'User deleted'}, status=status.HTTP_204_NO_CONTENT)
         except User.DoesNotExist:

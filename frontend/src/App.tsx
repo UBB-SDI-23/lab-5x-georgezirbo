@@ -93,7 +93,7 @@ function App() {
         <Route path="delete/student/" element={<DeleteStudents />} />
         <Route path="delete/course/" element={<DeleteCourses />} />
         <Route path="delete/teacher/" element={<DeleteTeachers />} />
-        <Route path="delete/grade/" element={<DeleteTeachers />} />
+        <Route path="delete/grade/" element={<DeleteGrades />} />
         <Route path="no-permission/" element={<NoPermission />} />
 
       </Routes>

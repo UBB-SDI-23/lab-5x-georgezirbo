@@ -20,7 +20,7 @@ import { Course } from "../../models/Course";
 import { Teacher } from "../../models/Teacher";
 import { BACKEND_API_URL } from "../../../constants";
 import { debounce } from "lodash";
-import {getUser, isAdmin, isUser} from "../utils";
+import {getAccessToken, getUser, isAdmin, isUser} from "../utils";
 
 export const CourseAdd = () => {
 	const navigate = useNavigate();
@@ -51,8 +51,11 @@ export const CourseAdd = () => {
 	const fetchSuggestions = async (query: string) => {
 		try {
 			const response = await axios.get<Teacher[]>(
-				`${BACKEND_API_URL}teacher/autocomplete/?query=${query}`
-			);
+				`${BACKEND_API_URL}teacher/autocomplete/?query=${query}`, {
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
+			});
 			const data = await response.data;
 			setTeachers(data);
 		} catch (error) {
@@ -81,7 +84,11 @@ export const CourseAdd = () => {
 		event.preventDefault();
         try {
             console.log(course);
-            const response = await axios.post(`${BACKEND_API_URL}course/`, course);
+            const response = await axios.post(`${BACKEND_API_URL}course/`, course, {
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
+			});
             const cid = response.data.cid
 			navigate(`/course/${cid}/details`);
 		} catch (error) {

@@ -2,7 +2,7 @@ import {debounce, parseInt} from "lodash";
 import { useCallback, useEffect } from "react";
 import {Box, IconButton, MenuItem, TextField} from '@mui/material';
 import { useState } from "react";
-import {getDefaultPageSize, isAdmin} from "./utils";
+import {getAccessToken, isAdmin} from "./utils";
 import axios from "axios";
 import {BACKEND_API_URL} from "../../constants";
 
@@ -91,7 +91,11 @@ export const Paginator = ({totalRows, currentPage,  setPage}: PaginatorProps) =>
 
     const editDefaultPageSize = async (pagesize: number) => {
         try{
-            const response = await axios.put(`${BACKEND_API_URL}settings/pagesize/`, {size: pagesize});
+            const response = await axios.put(`${BACKEND_API_URL}settings/pagesize/`, {size: pagesize}, {
+                headers: {
+                    Authorization: `Bearer ${getAccessToken()}`,
+                },
+            });
             await console.log(response.data);
         }catch(error){
             console.log(error);
