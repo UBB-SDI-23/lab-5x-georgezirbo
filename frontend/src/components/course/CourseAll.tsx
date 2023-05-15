@@ -21,27 +21,9 @@ export const CourseAll = () => {
 	const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(25);
     const [totalRows, setTotalRows] = useState(0);
-    const crt = (page - 1) * pageSize + 1;
-    const [isLastPage, setIsLastPage] = useState(false);
 
     const setCurrentPage = (newPage: number) => {
         setPage(newPage);
-    }
-
-    const goToNextPage = () => {
-        if (isLastPage) {
-            return;
-        }
-
-        setPage(page + 1);
-    }
-
-    const goToPrevPage = () => {
-        if (page === 1) {
-            return;
-        }
-
-        setPage(page - 1);
     }
 
     const fetchCourses = async () => {
@@ -57,7 +39,6 @@ export const CourseAll = () => {
         const { count, next, previous, results } = await response.json();
         setCourses(results);
         setTotalRows(count);
-        setIsLastPage(!next);
         setLoading(false);
       };
     

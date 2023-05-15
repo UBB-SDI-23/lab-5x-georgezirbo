@@ -26,6 +26,9 @@ class User(AbstractUser):
     is_superuser = models.BooleanField(default=False)
     last_login = models.DateTimeField(null=True, blank=True, default=None)
 
+    def __str__(self):
+        return f"{self.id} {self.username} {self.is_active} {self.is_staff} {self.is_superuser}"
+
 
 class Profile(models.Model):
     pid = models.AutoField(primary_key=True)

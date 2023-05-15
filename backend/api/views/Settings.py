@@ -6,12 +6,16 @@ from rest_framework.response import \
 
 from api.models import \
     DefaultPageSize
+from api.permissions import \
+    IsAdmin, \
+    IsAdminOrReadOnly
 from api.serializers import \
     DefaultPageSizeSerializer
 
 
 class DefaultPageSizeView(generics.GenericAPIView):
     serializer_class = DefaultPageSizeSerializer
+    permission_classes = [IsAdminOrReadOnly]
     queryset = DefaultPageSize.objects.get
 
     def get(self, request, *args, **kwargs):
@@ -25,6 +29,7 @@ class DefaultPageSizeView(generics.GenericAPIView):
     def put(self, request, *args, **kwargs):
         try:
             pagesize = DefaultPageSize.objects.get(pk=1)
+            self.check_object_permissions(request, pagesize)
             serializer = DefaultPageSizeSerializer(pagesize, data=request.data)
             if serializer.is_valid():
                 serializer.save()

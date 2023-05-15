@@ -10,9 +10,12 @@ from api.models import \
     Course, \
     Teacher, \
     Grade
+from api.permissions import \
+    IsAdmin
 
 
 class DeleteStudents(APIView):
+    permission_classes = [IsAdmin]
     def delete(self, request, *args, **kwargs):
         ids = request.data.get('ids', [])
         try:
@@ -22,6 +25,7 @@ class DeleteStudents(APIView):
             return Response({'error': 'The list contains id of inexistent students'}, status=status.HTTP_404_NOT_FOUND)
 
 class DeleteCourses(APIView):
+    permission_classes = [IsAdmin]
     def delete(self, request, *args, **kwargs):
         ids = request.data.get('ids', [])
         try:
@@ -31,6 +35,7 @@ class DeleteCourses(APIView):
             return Response({'error': 'The list contains id of inexistent courses'}, status=status.HTTP_404_NOT_FOUND)
 
 class DeleteTeachers(APIView):
+    permission_classes = [IsAdmin]
     def delete(self, request, *args, **kwargs):
         ids = request.data.get('ids', [])
         try:
@@ -40,6 +45,7 @@ class DeleteTeachers(APIView):
             return Response({'error': 'The list contains id of inexistent teachers'}, status=status.HTTP_404_NOT_FOUND)
 
 class DeleteGrades(APIView):
+    permission_classes = [IsAdmin]
     def delete(self, request, *args, **kwargs):
         ids = request.data.get('ids', [])
         try:

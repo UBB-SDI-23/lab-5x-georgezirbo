@@ -3,10 +3,27 @@ import {useNavigate} from "react-router-dom";
 import {User} from "../models/User";
 import axios from "axios";
 import {BACKEND_API_URL} from "../../constants";
+import jwt_decode from "jwt-decode";
 
 export function getToken(): Token  {
     const token = localStorage.getItem('token');
     return token ? JSON.parse(token) : ''
+}
+
+// export function updateToken(): Token {
+//     if (!isTokenActive()) {
+//         const response = await axios.post(`${BACKEND_API_URL}/token/refresh/`, {
+//             refresh: getToken().refresh ? getToken().refresh : "",
+//         });
+//         localStorage.setItem('token', JSON.stringify(response.data));
+//         localStorage.setItem('auth', JSON.stringify(jwt_decode(response.data.access)));
+//     }
+// }
+//
+//
+export function getAccessToken(): string  {
+    const token = getToken();
+    return token.access;
 }
 
 export function getUsername(): string {
@@ -59,8 +76,7 @@ export function isAdmin(): boolean {
     }
 }
 
-
-export function isTokenNotExpired() {
+export function isTokenActive() {
     const auth = localStorage.getItem('auth');
     if (!auth) return false;
 
@@ -72,14 +88,4 @@ export function isTokenNotExpired() {
 export function logOut() {
     localStorage.setItem('token', '');
     localStorage.setItem('auth', '');
-}
-
-export async function getDefaultPageSize() {
-    try {
-        const response = await axios.get(`${BACKEND_API_URL}settings/pagesize/`);
-        return parseInt(response.data.size);
-    } catch (error) {
-        console.error(error);
-        throw new Error('Unable to retrieve default page size');
-    }
 }

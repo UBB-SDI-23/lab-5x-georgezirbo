@@ -9,6 +9,8 @@ from django.forms import \
 from rest_framework import \
     generics, \
     status
+from rest_framework.permissions import \
+    IsAuthenticatedOrReadOnly
 from rest_framework.response import \
     Response
 
@@ -17,6 +19,8 @@ from api.models import \
     Teacher
 from api.pagination import \
     CustomPagination
+from api.permissions import \
+    HasEditPermissionOrReadOnly
 from api.serializers import \
     CourseSerializer
 
@@ -24,6 +28,7 @@ from api.serializers import \
 class CourseView(generics.GenericAPIView):
     serializer_class = CourseSerializer
     pagination_class = CustomPagination
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Course.objects.all().order_by('cid')
 
     def get(self, request, *args, **kwargs):
@@ -46,7 +51,7 @@ class CourseView(generics.GenericAPIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CourseDetailView(generics.GenericAPIView):
-
+    permission_classes = [IsAuthenticatedOrReadOnly, HasEditPermissionOrReadOnly]
     serializer_class = CourseSerializer
 
     def get(self, request, pk, *args, **kwargs):
@@ -59,8 +64,9 @@ class CourseDetailView(generics.GenericAPIView):
 
     def put(self, request, pk, *args, **kwargs):
         try:
-            student = Course.objects.get(pk=pk)
-            serializer = self.get_serializer(student, data=request.data)
+            course = Course.objects.get(pk=pk)
+            self.check_object_permissions(request, course)
+            serializer = self.get_serializer(course, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -71,8 +77,9 @@ class CourseDetailView(generics.GenericAPIView):
 
     def delete(self, request, pk, *args, **kwargs):
         try:
-            student = Course.objects.get(pk=pk)
-            student.delete()
+            course = Course.objects.get(pk=pk)
+            self.check_object_permissions(request, course)
+            course.delete()
             return Response({'message': 'Course deleted'}, status=status.HTTP_204_NO_CONTENT)
         except Course.DoesNotExist:
             return Response({'error': 'Course does not exist'}, status=404)
@@ -80,6 +87,7 @@ class CourseDetailView(generics.GenericAPIView):
 class CoursesNoStudentsView(generics.GenericAPIView):
     serializer_class = CourseSerializer
     pagination_class = CustomPagination
+    permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = Course.objects.all()\
             .prefetch_related('course_grades')\
             .annotate(no_students=Count('course_grades__student'))\
@@ -95,6 +103,7 @@ class CoursesNoStudentsView(generics.GenericAPIView):
 
 class CourseAutocompleteView(generics.GenericAPIView):
     serializer_class = CourseSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request, *args, **kwargs):
         start_time = time.time()

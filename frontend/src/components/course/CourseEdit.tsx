@@ -19,7 +19,7 @@ import axios from "axios";
 import { Course } from "../../models/Course";
 import { Teacher } from "../../models/Teacher";
 import { debounce } from "lodash";
-import {getUsername, isModerator, isUser} from "../utils";
+import {getAccessToken, getUsername, isModerator, isUser} from "../utils";
 
 export const CourseEdit = () => {
     const navigate = useNavigate();
@@ -93,7 +93,11 @@ export const CourseEdit = () => {
     const editCourse = async (event: { preventDefault: () => void}) => {
         event.preventDefault();
         try{
-            await axios.put(`${BACKEND_API_URL}course/${courseID}/`, course);
+            await axios.put(`${BACKEND_API_URL}course/${courseID}/`, course, {
+				headers: {
+					Authorization: `Bearer ${getAccessToken()}`,
+				},
+			});
 			navigate(`/course/${courseID}/details/`);
         }catch(error){
             console.log(error);

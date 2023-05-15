@@ -3,6 +3,8 @@ import \
 from rest_framework import \
     generics, \
     status
+from rest_framework.permissions import \
+    IsAuthenticatedOrReadOnly
 from rest_framework.response import \
     Response
 
@@ -15,6 +17,8 @@ from api.models import \
     Teacher
 from api.pagination import \
     CustomPagination
+from api.permissions import \
+    HasEditPermissionOrReadOnly
 from api.serializers import \
     UserSerializer, \
     ProfileSerializer
@@ -23,6 +27,7 @@ from api.serializers import \
 class ProfileView(generics.GenericAPIView):
     serializer_class = ProfileSerializer
     pagination_class = CustomPagination
+    permission_classes = [IsAuthenticatedOrReadOnly, HasEditPermissionOrReadOnly]
     queryset = Profile.objects.all().order_by('pid')
 
     def get(self, request, *args, **kwargs):
@@ -44,6 +49,7 @@ class ProfileView(generics.GenericAPIView):
 class ProfileDetailView(generics.GenericAPIView):
     serializer_class = ProfileSerializer
     pagination_class = CustomPagination
+    permission_classes = [HasEditPermissionOrReadOnly]
     queryset = Profile.objects.all().order_by('pid')
 
     def get(self, request, username, *args, **kwargs):
@@ -64,6 +70,7 @@ class ProfileDetailView(generics.GenericAPIView):
         try:
             user = User.objects.get(username=username)
             profile = Profile.objects.get(user_id=user.id)
+            self.check_object_permissions(request, profile)
             serializer = self.get_serializer(profile, data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -77,6 +84,7 @@ class ProfileDetailView(generics.GenericAPIView):
         try:
             user = User.objects.get(username=username)
             profile = Profile.objects.get(user_id=user.id)
+            self.check_object_permissions(request, profile)
             profile.delete()
             return Response({'message': 'Profile deleted'}, status=status.HTTP_204_NO_CONTENT)
         except Profile.DoesNotExist:
